@@ -1,0 +1,131 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'MBG Monitoring System',
+  description = 'Website Monitoring Program Makan Bergizi Gratis menggunakan AI RT-DETR',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title} | Program Makan Bergizi Gratis</title>
+    <style>
+      body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+      .nav-link { position: relative; }
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #10b981;
+        border-radius: 1px;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+      }
+      .nav-link:hover::after { width: 100%; }
+    </style>
+  </head>
+  <body class="font-sans bg-cream-50 text-surface-900 antialiased">
+    <!-- Navbar -->
+    <nav class="fixed top-0 inset-x-0 z-50 bg-brand-900/90 backdrop-blur-xl border-b border-brand-800/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-[72px]">
+        <a href="/" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center transition-transform group-hover:scale-105">
+            <svg class="w-5 h-5 text-brand-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+          </div>
+          <span class="font-bold text-white text-lg tracking-tight hidden sm:block">MBG Monitor</span>
+        </a>
+
+        <div class="flex items-center gap-8">
+          <div class="hidden md:flex items-center gap-6">
+            <a href="#cara-kerja" class="nav-link text-sm font-medium text-brand-200/80 hover:text-white transition-colors">Cara Kerja</a>
+            <a href="#statistik" class="nav-link text-sm font-medium text-brand-200/80 hover:text-white transition-colors">Statistik</a>
+            <a href="#coba-deteksi" class="nav-link text-sm font-medium text-brand-200/80 hover:text-white transition-colors">Coba Deteksi</a>
+          </div>
+          <a
+            href="/login"
+            class="bg-brand-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-400 transition-all hover:shadow-glow-brand"
+          >
+            Login
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-950 text-brand-200/70 pt-16 pb-8 mt-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-brand-800/30">
+          <div class="md:col-span-5">
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+              </div>
+              <span class="font-bold text-white text-lg tracking-tight">MBG Monitor</span>
+            </div>
+            <p class="text-sm leading-relaxed max-w-sm">
+              Sistem monitoring Program Makan Bergizi Gratis berbasis AI menggunakan model RT-DETR untuk estimasi nilai gizi makanan secara otomatis.
+            </p>
+          </div>
+
+          <div class="md:col-span-3">
+            <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Teknologi</h4>
+            <ul class="space-y-3 text-sm">
+              <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-400 rounded-full"></span>RT-DETR Object Detection</li>
+              <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-400 rounded-full"></span>AstroJS (SSR Framework)</li>
+              <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-400 rounded-full"></span>PostgreSQL + Drizzle ORM</li>
+              <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-400 rounded-full"></span>TailwindCSS</li>
+            </ul>
+          </div>
+
+          <div class="md:col-span-2">
+            <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Tautan</h4>
+            <ul class="space-y-3 text-sm">
+              <li><a href="/" class="hover:text-white transition-colors">Beranda</a></li>
+              <li><a href="#coba-deteksi" class="hover:text-white transition-colors">Coba Deteksi</a></li>
+              <li><a href="/login" class="hover:text-white transition-colors">Dashboard</a></li>
+            </ul>
+          </div>
+
+          <div class="md:col-span-2">
+            <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Riset</h4>
+            <ul class="space-y-3 text-sm">
+              <li><a href="/dashboard/evaluation" class="hover:text-white transition-colors">Evaluasi Model</a></li>
+              <li><a href="/dashboard/nutrition" class="hover:text-white transition-colors">Data Nutrisi</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-300/50">
+          <p>&copy; 2026 MBG Monitor. Penerapan RT-DETR untuk Estimasi Nutrisi.</p>
+          <p>Dibuat dengan AstroJS & TailwindCSS</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

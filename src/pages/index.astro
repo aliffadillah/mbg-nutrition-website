@@ -1,0 +1,513 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+---
+
+<PublicLayout title="MBG Monitor – Sistem Deteksi Nutrisi Makanan">
+  <!-- ─── Hero Section ─────────────────────────────────────────────────────── -->
+  <section class="relative min-h-screen flex items-center pt-[72px] overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-brand-950">
+    <!-- Background decoration -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-brand-500/15 to-transparent rounded-full blur-3xl -translate-y-1/4 translate-x-1/4"></div>
+      <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-500/10 to-transparent rounded-full blur-3xl translate-y-1/4 -translate-x-1/4"></div>
+      <div class="absolute top-1/2 left-1/2 w-[300px] h-[300px] bg-gradient-radial from-amber-500/5 to-transparent rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+        <!-- Left content -->
+        <div class="animate-fade-in">
+          <div class="inline-flex items-center gap-2 bg-white/10 text-brand-200 text-xs font-semibold px-4 py-2 rounded-full mb-8 border border-white/10 backdrop-blur-sm">
+            <span class="w-2 h-2 bg-brand-400 rounded-full animate-pulse"></span>
+            Program Makan Bergizi Gratis
+          </div>
+          <h1 class="text-4xl sm:text-5xl lg:text-[56px] font-extrabold text-white leading-[1.1] tracking-tight mb-6">
+            Estimasi Nutrisi
+            <span class="bg-gradient-to-r from-brand-300 to-amber-300 bg-clip-text text-transparent"> Makanan</span>
+            <br />dengan AI
+          </h1>
+          <p class="text-lg text-brand-100/70 leading-relaxed mb-10 max-w-lg">
+            Sistem monitoring berbasis <span class="font-semibold text-white">RT-DETR</span> yang mendeteksi menu
+            makanan, menghitung nilai gizi, dan membantu transparansi program MBG.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a
+              href="#coba-deteksi"
+              class="group bg-brand-500 text-white font-semibold px-7 py-3.5 rounded-xl hover:bg-brand-400 transition-all shadow-glow-brand hover:shadow-lg flex items-center gap-2.5"
+            >
+              <svg class="w-5 h-5 text-brand-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+              Coba Deteksi
+            </a>
+            <a
+              href="#cara-kerja"
+              class="font-semibold px-7 py-3.5 rounded-xl border border-white/20 text-white/80 hover:border-white/40 hover:text-white transition-all hover:bg-white/5"
+            >
+              Pelajari Cara Kerja
+            </a>
+          </div>
+
+          <!-- Mini stats -->
+          <div class="flex items-center gap-8 mt-12 pt-8 border-t border-white/10">
+            <div>
+              <p class="text-2xl font-extrabold text-white">RT-DETR</p>
+              <p class="text-xs text-brand-300/60 mt-0.5">Model Detection</p>
+            </div>
+            <div class="w-px h-10 bg-white/10"></div>
+            <div>
+              <p class="text-2xl font-extrabold text-white">92.3%</p>
+              <p class="text-xs text-brand-300/60 mt-0.5">mAP@50</p>
+            </div>
+            <div class="w-px h-10 bg-white/10"></div>
+            <div>
+              <p class="text-2xl font-extrabold text-white">Real-time</p>
+              <p class="text-xs text-brand-300/60 mt-0.5">Inference Speed</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right visual card -->
+        <div class="animate-slide-up">
+          <div class="relative">
+            <!-- Decorative elements -->
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-brand-400/20 rounded-3xl blur-xl"></div>
+            <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-amber-400/10 rounded-3xl blur-xl"></div>
+
+            <div class="relative bg-white/10 backdrop-blur-md rounded-3xl shadow-soft-xl p-8 border border-white/20">
+              <!-- Mock detection preview -->
+              <div class="aspect-[4/3] bg-gradient-to-br from-brand-800/50 to-brand-900/50 rounded-2xl flex flex-col items-center justify-center gap-5 mb-6 border border-white/10">
+                <div class="w-20 h-20 bg-gradient-to-br from-brand-400 to-emerald-400 rounded-2xl flex items-center justify-center shadow-glow-brand animate-float">
+                  <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                  </svg>
+                </div>
+                <p class="text-sm font-medium text-brand-200/70">Hasil Deteksi Menu AI</p>
+                <div class="flex gap-2">
+                  <span class="bg-rose-500/20 text-rose-300 text-[11px] font-semibold px-3 py-1 rounded-lg border border-rose-400/20">Nasi Putih</span>
+                  <span class="bg-amber-500/20 text-amber-300 text-[11px] font-semibold px-3 py-1 rounded-lg border border-amber-400/20">Ayam Goreng</span>
+                  <span class="bg-emerald-500/20 text-emerald-300 text-[11px] font-semibold px-3 py-1 rounded-lg border border-emerald-400/20">Sayur Bening</span>
+                </div>
+              </div>
+              <!-- Nutrition mini bar -->
+              <div class="grid grid-cols-4 gap-3">
+                {[
+                  { val: '487', unit: 'kkal', label: 'Kalori',  gradient: 'from-orange-500 to-amber-400' },
+                  { val: '28.3', unit: 'g', label: 'Protein', gradient: 'from-blue-500 to-indigo-400' },
+                  { val: '62.1', unit: 'g', label: 'Karbo',   gradient: 'from-emerald-500 to-teal-400' },
+                  { val: '12.8', unit: 'g', label: 'Lemak',   gradient: 'from-rose-500 to-pink-400' },
+                ].map(n => (
+                  <div class="text-center p-3 bg-white/10 rounded-xl border border-white/10">
+                    <p class="text-sm font-bold text-white">{n.val}<span class="text-[10px] text-brand-200/60 ml-0.5">{n.unit}</span></p>
+                    <p class="text-[10px] text-brand-200/50 mt-0.5">{n.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Penjelasan Sistem ─────────────────────────────────────────────────── -->
+  <section class="py-24 bg-cream-100" id="tentang">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-sm font-semibold text-brand-600 uppercase tracking-wider mb-3">Tentang Sistem</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-surface-900 tracking-tight mb-4">
+          Teknologi di Balik MBG Monitor
+        </h2>
+        <p class="text-surface-500 text-lg max-w-2xl mx-auto leading-relaxed">
+          Integrasi model <em>real-time object detection</em> dengan database nutrisi
+          untuk estimasi gizi otomatis dan akurat.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          {
+            icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z"/></svg>`,
+            title: 'RT-DETR Detection',
+            desc: 'Model RT-DETR mendeteksi foodtray dan setiap item menu dengan presisi tinggi dari satu foto.',
+            color: 'bg-indigo-100 text-indigo-600 border-indigo-200',
+          },
+          {
+            icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z"/></svg>`,
+            title: 'Estimasi Berat',
+            desc: 'Berat makanan diestimasi dari ukuran bounding box relatif terhadap ukuran foto yang diunggah.',
+            color: 'bg-amber-100 text-amber-600 border-amber-200',
+          },
+          {
+            icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>`,
+            title: 'Kalkulasi Gizi',
+            desc: 'Nilai gizi dihitung proporsional dari database nutrisi per 100g untuk setiap item yang terdeteksi.',
+            color: 'bg-brand-100 text-brand-700 border-brand-200',
+          },
+          {
+            icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>`,
+            title: 'Penyimpanan Data',
+            desc: 'Hasil deteksi tersimpan di PostgreSQL melalui Drizzle ORM dan dapat diakses via dashboard.',
+            color: 'bg-sky-100 text-sky-600 border-sky-200',
+          },
+          {
+            icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>`,
+            title: 'Monitoring Grafik',
+            desc: 'Dashboard menyediakan grafik monitoring tren nilai gizi harian untuk evaluasi program.',
+            color: 'bg-purple-100 text-purple-600 border-purple-200',
+          },
+          {
+            icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>`,
+            title: 'Akses Terproteksi',
+            desc: 'Data sensitif hanya diakses staff/admin terautentikasi dengan password terenkripsi bcrypt.',
+            color: 'bg-rose-100 text-rose-600 border-rose-200',
+          },
+        ].map(card => (
+          <div class="group p-6 rounded-2xl bg-white border border-surface-200/50 hover:shadow-soft-md transition-all duration-300 hover:-translate-y-1">
+            <div class={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 border ${card.color}`} set:html={card.icon} />
+            <h3 class="font-bold text-surface-900 text-[15px] mb-2">{card.title}</h3>
+            <p class="text-surface-500 text-sm leading-relaxed">{card.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Cara Kerja ────────────────────────────────────────────────────────── -->
+  <section class="py-24 bg-brand-50" id="cara-kerja">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-sm font-semibold text-brand-600 uppercase tracking-wider mb-3">Alur Kerja</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-surface-900 tracking-tight mb-4">
+          Cara Kerja Sistem
+        </h2>
+        <p class="text-surface-500 text-lg">Dari foto menjadi laporan gizi dalam 4 langkah sederhana</p>
+      </div>
+
+      <div class="relative">
+        <!-- Connection line -->
+        <div class="hidden lg:block absolute top-12 left-[calc(12.5%+12px)] right-[calc(12.5%+12px)] h-px bg-gradient-to-r from-brand-200 via-brand-400 to-brand-200"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6">
+          {[
+            { step: '01', title: 'Unggah Foto', desc: 'Upload foto menu dari kamera atau galeri perangkat Anda.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>` },
+            { step: '02', title: 'Deteksi AI', desc: 'Model RT-DETR mendeteksi setiap item menu dan foodtray.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z"/></svg>` },
+            { step: '03', title: 'Hitung Gizi', desc: 'Kalori, protein, karbohidrat, lemak dihitung otomatis.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"/></svg>` },
+            { step: '04', title: 'Simpan & Monitor', desc: 'Hasil tersimpan dan dipantau via dashboard analytics.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/></svg>` },
+          ].map(item => (
+            <div class="flex flex-col items-center text-center group">
+              <div class="relative w-24 h-24 bg-white border-2 border-brand-200 rounded-2xl flex items-center justify-center shadow-soft z-10 mb-5 group-hover:shadow-soft-md group-hover:border-brand-400 transition-all duration-300">
+                <span class="text-brand-600" set:html={item.icon} />
+                <span class="absolute -top-2 -right-2 w-7 h-7 bg-brand-600 text-white text-[11px] font-bold rounded-lg flex items-center justify-center shadow-sm">{item.step}</span>
+              </div>
+              <h3 class="font-bold text-surface-900 mb-2">{item.title}</h3>
+              <p class="text-surface-500 text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Statistik ─────────────────────────────────────────────────────────── -->
+  <section class="py-24 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-950 relative overflow-hidden" id="statistik">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-400/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <p class="text-sm font-semibold text-brand-300 uppercase tracking-wider mb-3">Kemampuan Sistem</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">Statistik & Spesifikasi</h2>
+        <p class="text-brand-200/60 text-lg">Performa teknis sistem yang telah dikembangkan</p>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {[
+          { value: 'RT-DETR', label: 'Arsitektur Model', sub: 'Real-Time Detection Transformer' },
+          { value: '2', label: 'Model Tersedia', sub: 'Foodtray & Menu Detector' },
+          { value: '0.6', label: 'Confidence Threshold', sub: 'Minimum deteksi item valid' },
+          { value: '4+', label: 'Nutrisi Dihitung', sub: 'Kalori, Protein, Karbo, Lemak' },
+        ].map(stat => (
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/10 hover:bg-white/15 transition-all duration-300 hover:-translate-y-1">
+            <p class="text-2xl lg:text-3xl font-extrabold text-white mb-2">{stat.value}</p>
+            <p class="font-semibold text-brand-200 text-sm mb-1">{stat.label}</p>
+            <p class="text-brand-300/50 text-xs">{stat.sub}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Coba Deteksi Section ──────────────────────────────────────────────── -->
+  <section class="py-24 bg-cream-100" id="coba-deteksi">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <p class="text-sm font-semibold text-brand-600 uppercase tracking-wider mb-3">Demo</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-surface-900 tracking-tight mb-4">Coba Deteksi</h2>
+        <p class="text-surface-500 text-lg leading-relaxed">
+          Unggah foto menu makanan dan lihat hasil deteksi nutrisi secara instan — tanpa perlu login.
+        </p>
+      </div>
+
+      <!-- Container: flex, overflow hidden untuk animasi width -->
+      <div class="flex gap-8 overflow-hidden items-start">
+
+          <!-- ── Panel Upload: awalnya penuh di tengah, menyempit saat hasil muncul ── -->
+          <div id="upload-panel" class="flex flex-col gap-5 flex-shrink-0 transition-all duration-500 ease-in-out" style="width:100%;max-width:42rem;margin:0 auto">
+            <!-- Drop zone -->
+            <div
+              class="bg-white border-2 border-dashed border-brand-200 rounded-3xl p-8 hover:border-brand-400 transition-all duration-300 shadow-soft"
+              id="drop-zone"
+            >
+              <!-- Upload prompt -->
+              <div class="flex flex-col items-center gap-5 text-center" id="upload-prompt">
+                <div class="w-16 h-16 bg-brand-100 rounded-2xl flex items-center justify-center border border-brand-200">
+                  <svg class="w-8 h-8 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M6.75 21h10.5a2.25 2.25 0 002.25-2.25V5.25A2.25 2.25 0 0017.25 3H6.75A2.25 2.25 0 004.5 5.25v13.5A2.25 2.25 0 006.75 21z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-surface-800 text-lg">Seret & Lepas foto di sini</p>
+                  <p class="text-surface-400 text-sm mt-1">atau klik tombol di bawah untuk memilih</p>
+                </div>
+                <label class="bg-brand-600 text-white font-semibold px-6 py-2.5 rounded-xl cursor-pointer hover:bg-brand-700 transition-all shadow-soft text-sm">
+                  Pilih Foto
+                  <input id="public-image-input" type="file" accept="image/*" class="sr-only" />
+                </label>
+                <p class="text-xs text-surface-400">JPG, PNG, WebP — maks 10 MB</p>
+              </div>
+              <!-- Preview area -->
+              <div id="preview-area" class="hidden">
+                <div class="relative">
+                  <img id="preview-img" src="" alt="Preview" class="w-full rounded-2xl object-contain max-h-96" />
+                  <button id="clear-img" class="absolute top-3 right-3 bg-surface-900/80 backdrop-blur-sm text-white w-8 h-8 rounded-xl text-sm font-bold hover:bg-red-500 transition-all">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detect button -->
+            <button
+              id="detect-btn"
+              disabled
+              class="w-full bg-brand-600 text-white font-bold px-10 py-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-brand-700 transition-all hover:shadow-glow-brand flex items-center justify-center gap-3 text-base"
+            >
+              <span id="detect-btn-icon">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+              </span>
+              <span id="detect-btn-text">Deteksi Sekarang</span>
+            </button>
+
+            <!-- Loading -->
+            <div id="loading-state" class="hidden text-center">
+              <div class="inline-flex items-center gap-3 bg-brand-50 text-brand-700 px-6 py-3.5 rounded-xl border border-brand-100">
+                <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4l-3 3-3-3h4z"></path>
+                </svg>
+                <span class="text-sm font-medium">Sedang mendeteksi… Mohon tunggu</span>
+              </div>
+            </div>
+
+            <!-- Error -->
+            <div id="error-state" class="hidden">
+              <div class="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-xl text-sm font-medium" id="error-message"></div>
+            </div>
+          </div>
+
+          <!-- ── Panel Hasil: awalnya tersembunyi (w-0), muncul setelah deteksi ── -->
+          <div id="results-panel" class="flex flex-col gap-5 flex-shrink-0 transition-all duration-500 ease-in-out overflow-hidden" style="width:0;opacity:0">
+            <!-- Estimasi Nilai Gizi (inline row) -->
+            <div class="bg-white rounded-2xl border border-surface-100 p-6 shadow-soft">
+              <h3 class="font-bold text-surface-900 mb-4 text-[15px]">Estimasi Nilai Gizi</h3>
+              <div id="nutrition-list" class="flex flex-col divide-y divide-surface-50"></div>
+            </div>
+
+            <!-- Item Terdeteksi -->
+            <div class="bg-white rounded-2xl border border-surface-100 overflow-hidden shadow-soft">
+              <div class="px-6 py-4 border-b border-surface-50 flex items-center justify-between">
+                <h3 class="font-bold text-surface-900 text-[15px]">Item Terdeteksi</h3>
+                <button id="back-btn" class="text-xs text-brand-600 hover:underline font-medium flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+                  Deteksi lagi
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                  <thead class="bg-surface-50 text-surface-500 text-xs uppercase">
+                    <tr>
+                      <th class="px-4 py-3 text-left font-semibold">Menu</th>
+                      <th class="px-4 py-3 text-right font-semibold">Conf.</th>
+                      <th class="px-4 py-3 text-right font-semibold">Berat</th>
+                      <th class="px-4 py-3 text-right font-semibold">Kalori</th>
+                      <th class="px-4 py-3 text-right font-semibold">Protein</th>
+                    </tr>
+                  </thead>
+                  <tbody id="items-tbody" class="divide-y divide-surface-50 bg-white"></tbody>
+                </table>
+              </div>
+              <div class="px-6 py-3 border-t border-surface-50">
+                <p class="text-xs text-surface-400">* Hasil disimpan otomatis. <a href="/login" class="text-brand-600 hover:underline font-medium">Login</a> untuk melihat riwayat.</p>
+              </div>
+            </div>
+          </div>
+
+      </div>
+    </div>
+  </section>
+</PublicLayout>
+
+<script>
+  const input = document.getElementById('public-image-input') as HTMLInputElement;
+  const previewArea = document.getElementById('preview-area')!;
+  const uploadPrompt = document.getElementById('upload-prompt')!;
+  const previewImg = document.getElementById('preview-img') as HTMLImageElement;
+  const clearBtn = document.getElementById('clear-img')!;
+  const detectBtn = document.getElementById('detect-btn') as HTMLButtonElement;
+  const detectBtnIcon = document.getElementById('detect-btn-icon')!;
+  const detectBtnText = document.getElementById('detect-btn-text')!;
+  const loadingState = document.getElementById('loading-state')!;
+  const errorState = document.getElementById('error-state')!;
+  const errorMessage = document.getElementById('error-message')!;
+  const nutritionList = document.getElementById('nutrition-list')!;
+  const itemsTbody = document.getElementById('items-tbody')!;
+  const backBtn = document.getElementById('back-btn')!;
+
+  let selectedFile: File | null = null;
+  let hasResults = false;
+
+  const uploadPanel = document.getElementById('upload-panel')!;
+  const resultsPanel = document.getElementById('results-panel')!;
+
+  // Animasi: upload panel menyempit ke kiri, panel hasil terbuka dari kanan
+  // gap-8 = 2rem = 32px → dikurangi dari masing-masing panel (16px per sisi)
+  function showResults() {
+    if (window.innerWidth >= 768) {
+      uploadPanel.style.width = 'calc(38% - 1rem)';
+      uploadPanel.style.maxWidth = 'calc(38% - 1rem)';
+      uploadPanel.style.margin = '0';
+      resultsPanel.style.width = 'calc(62% - 1rem)';
+      resultsPanel.style.opacity = '1';
+      resultsPanel.style.overflow = 'visible';
+    } else {
+      // Mobile: tetap full width, scroll ke hasil
+      resultsPanel.style.width = '100%';
+      resultsPanel.style.opacity = '1';
+      resultsPanel.style.overflow = 'visible';
+      setTimeout(() => resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+    hasResults = true;
+  }
+
+  // Animasi kembali ke kondisi awal
+  function hideResults() {
+    uploadPanel.style.width = '100%';
+    uploadPanel.style.maxWidth = '42rem';
+    uploadPanel.style.margin = '0 auto';
+    resultsPanel.style.width = '0';
+    resultsPanel.style.opacity = '0';
+    resultsPanel.style.overflow = 'hidden';
+    hasResults = false;
+  }
+
+  function showPreview(file: File) {
+    selectedFile = file;
+    previewImg.src = URL.createObjectURL(file);
+    uploadPrompt.classList.add('hidden');
+    previewArea.classList.remove('hidden');
+    detectBtn.disabled = false;
+    errorState.classList.add('hidden');
+    if (hasResults) hideResults();
+  }
+
+  function clearImage() {
+    selectedFile = null;
+    previewImg.src = '';
+    previewArea.classList.add('hidden');
+    uploadPrompt.classList.remove('hidden');
+    detectBtn.disabled = true;
+    errorState.classList.add('hidden');
+    input.value = '';
+    hideResults();
+  }
+
+  input.addEventListener('change', () => {
+    if (input.files?.[0]) showPreview(input.files[0]);
+  });
+
+  clearBtn.addEventListener('click', clearImage);
+  backBtn.addEventListener('click', hideResults);
+
+  // Drag & drop
+  const dropZone = document.getElementById('drop-zone')!;
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-brand-400'); });
+  dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-brand-400'); });
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-brand-400');
+    const file = e.dataTransfer?.files?.[0];
+    if (file && file.type.startsWith('image/')) showPreview(file);
+  });
+
+  detectBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+
+    detectBtn.disabled = true;
+    detectBtnIcon.innerHTML = '<svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4l-3 3-3-3h4z"/></svg>';
+    detectBtnText.textContent = 'Mendeteksi...';
+    loadingState.classList.remove('hidden');
+    errorState.classList.add('hidden');
+
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+
+      const jsonRes = await fetch('/api/detect', { method: 'POST', body: formData });
+      if (!jsonRes.ok) throw new Error(`Server error: ${jsonRes.status}`);
+      const data = await jsonRes.json();
+
+      if (!data.success) throw new Error(data.error ?? 'Detection failed');
+
+      // Render nutrisi sebagai baris inline
+      const n = data.nutrition_totals ?? { calories: 0, protein: 0, carbohydrates: 0, fat: 0 };
+      const nutrients = [
+        { icon: '🔥', label: 'Kalori',      value: n.calories,      unit: 'kkal', valueColor: 'text-orange-600' },
+        { icon: '💪', label: 'Protein',     value: n.protein,       unit: 'g',    valueColor: 'text-blue-600' },
+        { icon: '🌾', label: 'Karbohidrat', value: n.carbohydrates, unit: 'g',    valueColor: 'text-amber-600' },
+        { icon: '🫒', label: 'Lemak',       value: n.fat,           unit: 'g',    valueColor: 'text-emerald-600' },
+      ];
+      nutritionList.innerHTML = nutrients.map(item => `
+        <div class="flex items-center justify-between py-3">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">${item.icon}</span>
+            <span class="text-sm font-medium text-surface-600">${item.label}</span>
+          </div>
+          <span class="font-bold ${item.valueColor} whitespace-nowrap shrink-0">${item.value} <span class="text-xs font-normal text-surface-400">${item.unit}</span></span>
+        </div>
+      `).join('');
+
+      // Render tabel item
+      const items = data.nutrition_items ?? [];
+      if (items.length > 0) {
+        itemsTbody.innerHTML = items.map((item: { food_name: string; confidence: number; estimated_weight_gram: number; calories: number; protein: number; }) => `
+          <tr class="hover:bg-surface-50 transition-colors">
+            <td class="px-4 py-3 font-semibold text-surface-900 capitalize">${item.food_name}</td>
+            <td class="px-4 py-3 text-right text-surface-500">${(item.confidence * 100).toFixed(1)}%</td>
+            <td class="px-4 py-3 text-right text-surface-500">${item.estimated_weight_gram}g</td>
+            <td class="px-4 py-3 text-right text-surface-500">${item.calories}</td>
+            <td class="px-4 py-3 text-right text-surface-500">${item.protein}g</td>
+          </tr>
+        `).join('');
+      } else {
+        itemsTbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-surface-400">Tidak ada item terdeteksi.</td></tr>`;
+      }
+
+      // Animasi: upload menyempit, panel hasil terbuka
+      showResults();
+    } catch (err: unknown) {
+      errorMessage.textContent = err instanceof Error ? err.message : 'Terjadi kesalahan. Pastikan API berjalan.';
+      errorState.classList.remove('hidden');
+    } finally {
+      detectBtn.disabled = false;
+      detectBtnIcon.innerHTML = '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>';
+      detectBtnText.textContent = 'Deteksi Sekarang';
+      loadingState.classList.add('hidden');
+    }
+  });
+</script>
+

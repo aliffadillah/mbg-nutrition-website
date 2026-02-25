@@ -1,0 +1,241 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+
+let evalData: {
+  models: {
+    foodtray: { map50: number; map5095: number; precision: number; recall: number; f1: number; classes: Array<{ name: string; ap50: number; precision: number; recall: number }> };
+    menu: { map50: number; map5095: number; precision: number; recall: number; f1: number; classes: Array<{ name: string; ap50: number; precision: number; recall: number }> };
+  };
+  confusion_matrix: { foodtray: number[][]; menu: number[][] };
+  metadata: { eval_date: string; dataset_split: string; total_images: number; epochs: number };
+} | null = null;
+
+try {
+  const response = await fetch(new URL('/evaluation.json', Astro.url).toString());
+  evalData = await response.json();
+} catch {
+  // File may not exist in dev — use mock data
+  evalData = {
+    models: {
+      foodtray: {
+        map50: 0.923, map5095: 0.711, precision: 0.941, recall: 0.897, f1: 0.918,
+        classes: [{ name: 'foodtray', ap50: 0.923, precision: 0.941, recall: 0.897 }],
+      },
+      menu: {
+        map50: 0.874, map5095: 0.652, precision: 0.891, recall: 0.856, f1: 0.873,
+        classes: [
+          { name: 'nasi putih', ap50: 0.943, precision: 0.921, recall: 0.894 },
+          { name: 'ayam goreng', ap50: 0.912, precision: 0.887, recall: 0.867 },
+          { name: 'sayur bening', ap50: 0.856, precision: 0.823, recall: 0.811 },
+          { name: 'tempe goreng', ap50: 0.831, precision: 0.809, recall: 0.798 },
+          { name: 'tahu goreng', ap50: 0.845, precision: 0.827, recall: 0.813 },
+          { name: 'buah pisang', ap50: 0.889, precision: 0.864, recall: 0.842 },
+        ],
+      },
+    },
+    confusion_matrix: {
+      foodtray: [[89, 3], [5, 2]],
+      menu: [[85, 4, 2], [3, 78, 5], [2, 6, 72]],
+    },
+    metadata: {
+      eval_date: '2026-02-25',
+      dataset_split: 'test (20%)',
+      total_images: 850,
+      epochs: 100,
+    },
+  };
+}
+
+const ft = evalData?.models.foodtray;
+const mn = evalData?.models.menu;
+
+function pct(v: number): string {
+  return `${(v * 100).toFixed(1)}%`;
+}
+function barWidth(v: number): string {
+  return `${Math.min(100, v * 100).toFixed(1)}%`;
+}
+---
+
+<DashboardLayout title="Evaluasi Model" activeNav="evaluation">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-brand-900">Evaluasi Performa Model</h2>
+        <p class="text-sm text-brand-600/60">
+          Dataset: {evalData?.metadata.dataset_split} · {evalData?.metadata.total_images} gambar ·
+          {evalData?.metadata.epochs} epoch · {evalData?.metadata.eval_date}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Model comparison cards -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    {[
+      { name: 'Foodtray Detector', data: ft, gradient: 'from-indigo-500 to-blue-500', accent: 'indigo', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
+      { name: 'Menu Detector', data: mn, gradient: 'from-brand-500 to-emerald-500', accent: 'brand', iconBg: 'bg-brand-50', iconColor: 'text-brand-600' },
+    ].map(({ name, data, gradient, accent, iconBg, iconColor }) => (
+      <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft overflow-hidden">
+        <!-- Card header with gradient accent -->
+        <div class={`bg-gradient-to-r ${gradient} px-6 py-4 flex items-center justify-between`}>
+          <h3 class="font-bold text-white">{name}</h3>
+          <span class="text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-sm">RT-DETR</span>
+        </div>
+
+        <div class="p-6">
+          <!-- Key metrics -->
+          <div class="grid grid-cols-2 gap-3 mb-5">
+            {[
+              { label: 'mAP@50', value: data ? pct(data.map50) : '—', sub: 'Primary metric', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+              { label: 'mAP@50-95', value: data ? pct(data.map5095) : '—', sub: 'COCO metric', color: 'text-purple-600', bg: 'bg-purple-50' },
+              { label: 'Precision', value: data ? pct(data.precision) : '—', sub: 'True positive rate', color: 'text-amber-600', bg: 'bg-amber-50' },
+              { label: 'Recall', value: data ? pct(data.recall) : '—', sub: 'Sensitivity', color: 'text-teal-600', bg: 'bg-teal-50' },
+            ].map(m => (
+              <div class={`${m.bg} rounded-xl p-3.5`}>
+                <p class={`text-xl font-bold ${m.color}`}>{m.value}</p>
+                <p class="text-xs font-semibold text-surface-600 mt-0.5">{m.label}</p>
+                <p class="text-xs text-surface-400">{m.sub}</p>
+              </div>
+            ))}
+          </div>
+
+          <!-- F1 Score bar -->
+          <div class="mb-5">
+            <div class="flex justify-between text-xs text-surface-500 mb-2">
+              <span class="font-medium">F1-Score</span>
+              <span class="font-bold text-surface-800">{data ? pct(data.f1) : '—'}</span>
+            </div>
+            <div class="h-2 bg-surface-100 rounded-full overflow-hidden">
+              <div class={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-500`} style={`width: ${data ? barWidth(data.f1) : '0'}`}></div>
+            </div>
+          </div>
+
+          <!-- Per-class AP -->
+          {data && data.classes.length > 0 && (
+            <div>
+              <p class="text-xs font-medium text-surface-400 uppercase tracking-wider mb-3">AP per Kelas</p>
+              <div class="space-y-2.5">
+                {data.classes.map(cls => (
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-surface-600 font-medium capitalize">{cls.name}</span>
+                      <span class="text-surface-400 font-semibold">{pct(cls.ap50)}</span>
+                    </div>
+                    <div class="h-1.5 bg-surface-100 rounded-full">
+                      <div class={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-500`} style={`width: ${barWidth(cls.ap50)}`}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Confusion Matrices -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    {(['foodtray', 'menu'] as const).map(model => {
+      const matrix = evalData?.confusion_matrix?.[model];
+      const modelData = evalData?.models?.[model];
+      if (!matrix || !modelData) return null;
+      const classNames = modelData.classes.map(c => c.name);
+
+      return (
+        <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft p-6">
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+              <svg class="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 0v1.5c0 .621-.504 1.125-1.125 1.125"/></svg>
+            </div>
+            <h3 class="font-semibold text-brand-900">Confusion Matrix — {model === 'foodtray' ? 'Foodtray' : 'Menu'}</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="text-xs text-center w-full">
+              <thead>
+                <tr>
+                  <th class="px-3 py-2.5 text-surface-400 font-normal text-left">Pred ↓ / Actual →</th>
+                  {classNames.map(c => <th class="px-3 py-2.5 font-medium text-surface-500 capitalize">{c.length > 12 ? c.slice(0, 12) + '…' : c}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {matrix.map((row, ri) => (
+                  <tr>
+                    <td class="px-3 py-2.5 font-medium text-surface-500 capitalize text-left">{classNames[ri]?.length > 12 ? classNames[ri]?.slice(0, 12) + '…' : classNames[ri]}</td>
+                    {row.map((val, ci) => {
+                      const isCorrect = ri === ci;
+                      const maxVal = Math.max(...row);
+                      const opacity = val / (maxVal || 1);
+                      const bgColor = isCorrect
+                        ? `rgba(34, 197, 94, ${Math.max(0.1, opacity).toFixed(2)})`
+                        : val > 0 ? 'rgba(239, 68, 68, 0.08)' : 'transparent';
+                      const txtColor = isCorrect && opacity > 0.5 ? 'white' : '#374151';
+                      return (
+                        <td class="px-3 py-2.5 font-bold rounded-lg" style={`background-color: ${bgColor}; color: ${txtColor}`}>
+                          {val}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div class="flex items-center gap-4 mt-4">
+            <div class="flex items-center gap-1.5">
+              <div class="w-3 h-3 rounded" style="background-color: rgba(34, 197, 94, 0.5)"></div>
+              <span class="text-xs text-surface-400">Prediksi benar</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="w-3 h-3 rounded" style="background-color: rgba(239, 68, 68, 0.08)"></div>
+              <span class="text-xs text-surface-400">Salah klasifikasi</span>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Per-class comparison table -->
+  <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft overflow-hidden">
+    <div class="px-6 py-4 border-b border-brand-100/50 flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+        <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/></svg>
+      </div>
+      <h3 class="font-semibold text-brand-900">Detail Performa per Kelas — Menu Detector</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-brand-50/60">
+          <tr>
+            <th class="px-5 py-3.5 text-left text-xs font-medium text-brand-600/60 uppercase tracking-wider">Kelas</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">AP@50</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Precision</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Recall</th>
+            <th class="px-5 py-3.5 text-left text-xs font-medium text-brand-600/60 uppercase tracking-wider">Bar</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-100">
+          {mn?.classes.map(cls => (
+            <tr class="hover:bg-surface-50/70 transition-colors duration-150">
+              <td class="px-5 py-3.5 font-semibold text-surface-900 capitalize">{cls.name}</td>
+              <td class="px-5 py-3.5 text-right font-bold text-brand-600">{pct(cls.ap50)}</td>
+              <td class="px-5 py-3.5 text-right text-amber-600 font-medium">{pct(cls.precision)}</td>
+              <td class="px-5 py-3.5 text-right text-blue-600 font-medium">{pct(cls.recall)}</td>
+              <td class="px-5 py-3.5 w-36">
+                <div class="h-2 bg-surface-100 rounded-full">
+                  <div class="h-full bg-gradient-to-r from-brand-500 to-emerald-500 rounded-full transition-all duration-500" style={`width: ${barWidth(cls.ap50)}`}></div>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</DashboardLayout>

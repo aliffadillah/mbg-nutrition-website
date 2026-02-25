@@ -1,0 +1,183 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { db } from '../../db/db';
+import { detections, foodNutrition, users } from '../../db/schema';
+import { sql, desc } from 'drizzle-orm';
+
+// Fetch summary stats server-side
+let stats = { totalDetections: 0, totalNutrition: 0, totalUsers: 0, avgCalories: '0' };
+let recentDetections: Array<{ id: number; menuCount: number; totalCalories: string; detectedAt: Date; username: string | null }> = [];
+let dailyChart: Array<{ date: string; calories: string; detections: string }> = [];
+
+try {
+  const [det, nut, usr] = await Promise.all([
+    db.select({ count: sql<number>`count(*)` }).from(detections),
+    db.select({ count: sql<number>`count(*)` }).from(foodNutrition),
+    db.select({ count: sql<number>`count(*)` }).from(users),
+  ]);
+
+  stats.totalDetections = Number(det[0]?.count ?? 0);
+  stats.totalNutrition = Number(nut[0]?.count ?? 0);
+  stats.totalUsers = Number(usr[0]?.count ?? 0);
+
+  // Avg calories last 30 days
+  const avgResult = await db.execute<{ avg_calories: string }>(sql`
+    SELECT ROUND(AVG(total_calories::numeric), 1) as avg_calories
+    FROM detections WHERE detected_at >= NOW() - INTERVAL '30 days'
+  `);
+  stats.avgCalories = String((avgResult[0] as Record<string, unknown>)?.avg_calories ?? '0');
+
+  // Recent 5
+  recentDetections = await db
+    .select({
+      id: detections.id,
+      menuCount: detections.menuCount,
+      totalCalories: detections.totalCalories,
+      detectedAt: detections.detectedAt,
+      username: users.username,
+    })
+    .from(detections)
+    .leftJoin(users, sql`detections.user_id = users.id`)
+    .orderBy(desc(detections.detectedAt))
+    .limit(5);
+
+  // 7-day chart data
+  const chartResult = await db.execute<{ date: string; calories: string; det_count: string }>(sql`
+    SELECT 
+      TO_CHAR(DATE(detected_at), 'DD/MM') as date,
+      ROUND(SUM(total_calories::numeric), 1) as calories,
+      COUNT(*) as det_count
+    FROM detections
+    WHERE detected_at >= NOW() - INTERVAL '7 days'
+    GROUP BY DATE(detected_at)
+    ORDER BY DATE(detected_at) ASC
+  `);
+  dailyChart = Array.from(chartResult).map((r: any) => ({ date: r.date, calories: r.calories, detections: r.det_count }));
+} catch (e) {
+  // DB not yet connected – show empty state
+  console.error('Dashboard stats error:', e);
+}
+
+const summaryCards = [
+  { label: 'Total Deteksi', value: stats.totalDetections, desc: 'Semua waktu', color: 'from-indigo-500 to-indigo-600', bg: 'bg-indigo-50', textColor: 'text-indigo-600', icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/></svg>` },
+  { label: 'Rata-rata Kalori', value: `${stats.avgCalories} kkal`, desc: '30 hari terakhir', color: 'from-amber-500 to-orange-500', bg: 'bg-amber-50', textColor: 'text-amber-600', icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/></svg>` },
+  { label: 'Data Nutrisi', value: stats.totalNutrition, desc: 'Item dalam database', color: 'from-emerald-500 to-green-500', bg: 'bg-emerald-50', textColor: 'text-emerald-600', icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>` },
+  { label: 'Pengguna', value: stats.totalUsers, desc: 'Staff terdaftar', color: 'from-violet-500 to-purple-500', bg: 'bg-violet-50', textColor: 'text-violet-600', icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>` },
+];
+---
+
+<DashboardLayout title="Ringkasan Dashboard" activeNav="summary">
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+    {summaryCards.map(card => (
+      <div class="bg-white rounded-2xl p-5 border border-brand-100/50 shadow-soft hover:shadow-soft-md transition-all duration-300">
+        <div class="flex items-start justify-between mb-4">
+          <div class={`w-10 h-10 rounded-xl ${card.bg} flex items-center justify-center ${card.textColor}`} set:html={card.icon} />
+          <span class="text-[11px] font-medium text-brand-600/60 bg-brand-50 px-2.5 py-1 rounded-lg">{card.desc}</span>
+        </div>
+        <p class="text-2xl font-extrabold text-brand-900 tracking-tight">{card.value}</p>
+        <p class="text-xs text-brand-600/60 mt-1 font-medium">{card.label}</p>
+      </div>
+    ))}
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+    <!-- Daily Calorie Chart -->
+    <div class="lg:col-span-3 bg-white rounded-2xl border border-brand-100/50 p-6 shadow-soft">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="font-bold text-brand-900 text-[15px]">Grafik Kalori Harian</h2>
+          <p class="text-xs text-brand-600/60 mt-0.5">Total kalori per hari</p>
+        </div>
+        <span class="text-[11px] font-medium text-brand-600/60 bg-brand-50 px-3 py-1.5 rounded-lg">7 hari terakhir</span>
+      </div>
+      <div id="chart-container" class="h-56 flex items-end gap-3">
+        {dailyChart.length === 0 ? (
+          <div class="w-full flex flex-col items-center justify-center text-surface-300 gap-3">
+            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+            </svg>
+            <p class="text-sm">Belum ada data deteksi</p>
+          </div>
+        ) : (
+          dailyChart.map(d => {
+            const maxCal = Math.max(...dailyChart.map(x => parseFloat(x.calories) || 0));
+            const heightPct = maxCal > 0 ? Math.max(8, (parseFloat(d.calories) / maxCal) * 100) : 8;
+            return (
+              <div class="flex-1 flex flex-col items-center gap-1.5">
+                <span class="text-[11px] text-surface-500 font-semibold">{d.calories}</span>
+                <div
+                  class="w-full bg-gradient-to-t from-brand-500 to-brand-400 rounded-lg hover:from-brand-600 hover:to-brand-500 transition-all cursor-pointer"
+                  style={`height: ${heightPct}%`}
+                  title={`${d.date}: ${d.calories} kkal`}
+                ></div>
+                <span class="text-[11px] text-surface-400">{d.date}</span>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+
+    <!-- Recent Detections -->
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-brand-100/50 p-6 shadow-soft">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-bold text-brand-900 text-[15px]">Deteksi Terbaru</h2>
+          <p class="text-xs text-brand-600/60 mt-0.5">5 terakhir</p>
+        </div>
+        <a href="/dashboard/history" class="text-xs text-brand-600 hover:text-brand-700 font-semibold transition-colors flex items-center gap-1">
+          Semua
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        </a>
+      </div>
+      {recentDetections.length === 0 ? (
+        <div class="flex flex-col items-center justify-center h-40 text-surface-300 gap-3">
+          <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-sm">Belum ada riwayat</p>
+          <a href="/dashboard/detect" class="text-brand-600 text-xs hover:underline font-semibold">+ Mulai Deteksi</a>
+        </div>
+      ) : (
+        <div class="space-y-1">
+          {recentDetections.map(det => (
+            <div class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-brand-50/30 transition-colors group">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-brand-50 rounded-lg flex items-center justify-center text-brand-600 text-xs font-bold">
+                  #{det.id}
+                </div>
+                <div>
+                  <p class="text-[13px] font-semibold text-brand-900">{det.menuCount} item terdeteksi</p>
+                  <p class="text-[11px] text-brand-600/60">
+                    {det.username ?? '—'} · {new Date(det.detectedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+              <span class="text-[13px] font-bold text-amber-600">{det.totalCalories} kkal</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {[
+      { href: '/dashboard/detect', label: 'Deteksi Menu Baru', desc: 'Upload gambar dan analisis nutrisi', gradient: 'from-brand-600 to-emerald-500', icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/></svg>` },
+      { href: '/dashboard/nutrition', label: 'Kelola Data Nutrisi', desc: 'Tambah, edit, atau hapus data', gradient: 'from-indigo-600 to-violet-500', icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>` },
+      { href: '/dashboard/evaluation', label: 'Evaluasi Model', desc: 'Lihat performa model AI', gradient: 'from-purple-600 to-fuchsia-500', icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>` },
+    ].map(action => (
+      <a href={action.href} class={`bg-gradient-to-r ${action.gradient} rounded-2xl p-5 transition-all hover:shadow-soft-lg group text-white`}>
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0" set:html={action.icon} />
+          <div>
+            <p class="font-bold text-[15px]">{action.label}</p>
+            <p class="text-sm opacity-80 mt-0.5 font-normal">{action.desc}</p>
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+</DashboardLayout>

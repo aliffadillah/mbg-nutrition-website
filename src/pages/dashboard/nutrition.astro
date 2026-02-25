@@ -1,0 +1,319 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { db } from '../../db/db';
+import { foodNutrition } from '../../db/schema';
+import { asc, ilike, sql } from 'drizzle-orm';
+
+const url = new URL(Astro.request.url);
+const search = url.searchParams.get('search') ?? '';
+const page = Math.max(1, parseInt(url.searchParams.get('page') ?? '1'));
+const limit = 20;
+const offset = (page - 1) * limit;
+
+const whereClause = search ? ilike(foodNutrition.foodName, `%${search}%`) : undefined;
+
+let rows: typeof foodNutrition.$inferSelect[] = [];
+let total = 0;
+
+try {
+  [rows] = await Promise.all([
+    db.select().from(foodNutrition).where(whereClause).orderBy(asc(foodNutrition.foodName)).limit(limit).offset(offset),
+  ]);
+  const countResult = await db.select({ count: sql<number>`count(*)` }).from(foodNutrition).where(whereClause);
+  total = Number(countResult[0]?.count ?? 0);
+} catch (e) {
+  console.error('Nutrition page error:', e);
+}
+
+const totalPages = Math.ceil(total / limit);
+---
+
+<DashboardLayout title="Data Master Nutrisi" activeNav="nutrition">
+  <!-- Header + Add button -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-brand-900">Data Master Nutrisi</h2>
+        <p class="text-sm text-brand-600/60">Kelola data gizi per 100 gram setiap item menu</p>
+      </div>
+    </div>
+    <button id="add-btn" class="bg-brand-600 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-700 transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      Tambah Data
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft p-4 mb-6">
+    <form method="GET" class="flex gap-3">
+      <div class="relative flex-1">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+          <svg class="w-4 h-4 text-brand-300" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+        </div>
+        <input
+          type="text"
+          name="search"
+          value={search}
+          placeholder="Cari nama makanan..."
+          class="w-full pl-10 pr-4 py-2.5 border border-brand-200/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400 text-brand-800 placeholder:text-brand-300/50 transition-all duration-200"
+        />
+      </div>
+      <button type="submit" class="bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-700 transition-all duration-200 shadow-sm">
+        Cari
+      </button>
+      {search && (
+        <a href="/dashboard/nutrition" class="bg-cream-100 text-brand-700 px-4 py-2.5 rounded-xl text-sm hover:bg-cream-200 transition border border-brand-200/50">Reset</a>
+      )}
+    </form>
+    <div class="mt-2">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-600 text-xs font-medium">{total} data ditemukan</span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-brand-50/60 border-b border-brand-100/50">
+          <tr>
+            <th class="px-5 py-3.5 text-left text-xs font-medium text-brand-600/60 uppercase tracking-wider">Nama Makanan</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Kalori</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Protein</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Karbo</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Lemak</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Serat</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Ref. Berat</th>
+            <th class="px-5 py-3.5 text-center text-xs font-medium text-brand-600/60 uppercase tracking-wider">Aksi</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-100" id="nutrition-tbody">
+          {rows.length === 0 ? (
+            <tr>
+              <td colspan="8" class="px-5 py-16 text-center">
+                <div class="flex flex-col items-center gap-4">
+                  <div class="w-14 h-14 rounded-2xl bg-surface-50 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-surface-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3"/></svg>
+                  </div>
+                  <div class="text-center">
+                    <p class="text-surface-500 font-medium">Belum ada data nutrisi</p>
+                    <p class="text-surface-300 text-xs mt-1">Tambahkan data pertama Anda</p>
+                  </div>
+                  <button id="add-btn-empty" class="inline-flex items-center gap-1.5 text-brand-600 text-sm hover:text-brand-700 font-semibold transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                    Tambah Data
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ) : (
+            rows.map(row => (
+              <tr class="hover:bg-surface-50/70 transition-colors duration-150 group nutrition-row" data-id={row.id}>
+                <td class="px-5 py-3.5 font-semibold text-surface-900">{row.foodName}</td>
+                <td class="px-5 py-3.5 text-right font-semibold text-amber-600">{parseFloat(String(row.calories)).toFixed(1)}</td>
+                <td class="px-5 py-3.5 text-right text-blue-600 font-medium">{parseFloat(String(row.protein)).toFixed(1)}g</td>
+                <td class="px-5 py-3.5 text-right text-purple-600 font-medium">{parseFloat(String(row.carbohydrates)).toFixed(1)}g</td>
+                <td class="px-5 py-3.5 text-right text-rose-600 font-medium">{parseFloat(String(row.fat)).toFixed(1)}g</td>
+                <td class="px-5 py-3.5 text-right text-teal-600 font-medium">{parseFloat(String(row.fiber)).toFixed(1)}g</td>
+                <td class="px-5 py-3.5 text-right text-surface-400">{parseFloat(String(row.referenceWeightGram)).toFixed(0)}g</td>
+                <td class="px-5 py-3.5 text-center">
+                  <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                    <button class="edit-btn w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center text-surface-300 hover:text-blue-600 transition-all duration-200"
+                      data-id={row.id}
+                      data-name={row.foodName}
+                      data-calories={row.calories}
+                      data-protein={row.protein}
+                      data-carbo={row.carbohydrates}
+                      data-fat={row.fat}
+                      data-fiber={row.fiber}
+                      data-sugar={row.sugar}
+                      data-sodium={row.sodium}
+                      data-refweight={row.referenceWeightGram}
+                      title="Edit"
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                    </button>
+                    <button class="delete-btn w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-surface-300 hover:text-red-500 transition-all duration-200"
+                      data-id={row.id}
+                      title="Hapus"
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+
+    {totalPages > 1 && (
+      <div class="px-5 py-4 border-t border-surface-100 flex items-center justify-between">
+        <p class="text-sm text-surface-400">Halaman <span class="font-semibold text-surface-600">{page}</span> dari <span class="font-semibold text-surface-600">{totalPages}</span></p>
+        <div class="flex gap-2">
+          {page > 1 && <a href={`/dashboard/nutrition?page=${page - 1}&search=${search}`} class="inline-flex items-center gap-1 px-3.5 py-1.5 border border-surface-200 rounded-xl text-sm text-surface-600 hover:bg-surface-50 transition-all duration-200 font-medium"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg> Sebelumnya</a>}
+          {page < totalPages && <a href={`/dashboard/nutrition?page=${page + 1}&search=${search}`} class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-brand-600 text-white rounded-xl text-sm hover:bg-brand-700 transition-all duration-200 font-medium shadow-sm">Berikutnya <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></a>}
+        </div>
+      </div>
+    )}
+  </div>
+</DashboardLayout>
+
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-brand-950/40 backdrop-blur-sm" id="modal-overlay"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-soft-xl w-full max-w-lg p-7 relative animate-fade-in">
+      <button id="modal-close" class="absolute top-5 right-5 w-8 h-8 rounded-lg hover:bg-surface-100 flex items-center justify-center text-surface-400 hover:text-surface-600 transition-all duration-200">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+          <svg class="w-5 h-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        </div>
+        <h3 id="modal-title" class="text-lg font-bold text-brand-900">Tambah Data Nutrisi</h3>
+      </div>
+      <form id="nutrition-form" class="space-y-4">
+        <input type="hidden" id="form-id" value="" />
+
+        <div>
+          <label class="block text-xs font-medium text-surface-500 mb-1.5">Nama Makanan *</label>
+          <input id="form-name" type="text" required placeholder="contoh: nasi putih" class="w-full px-4 py-2.5 border border-surface-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400 text-surface-900 placeholder:text-surface-300 transition-all duration-200" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          {[
+            ['form-calories', 'Kalori (kkal/100g)', '0'],
+            ['form-protein', 'Protein (g/100g)', '0'],
+            ['form-carbo', 'Karbohidrat (g/100g)', '0'],
+            ['form-fat', 'Lemak (g/100g)', '0'],
+            ['form-fiber', 'Serat (g/100g)', '0'],
+            ['form-sugar', 'Gula (g/100g)', '0'],
+            ['form-sodium', 'Sodium (mg/100g)', '0'],
+            ['form-refweight', 'Berat Referensi (g)', '100'],
+          ].map(([id, label, placeholder]) => (
+            <div>
+              <label class="block text-xs font-medium text-surface-500 mb-1.5">{label}</label>
+              <input id={id} type="number" step="0.01" min="0" placeholder={placeholder} value="0"
+                class="w-full px-3 py-2.5 border border-surface-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400 text-surface-900 transition-all duration-200" />
+            </div>
+          ))}
+        </div>
+
+        <div id="form-error" class="hidden bg-red-50 border border-red-100 text-red-600 text-sm px-4 py-3 rounded-xl"></div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="modal-cancel" class="flex-1 bg-surface-50 text-surface-600 font-semibold py-3 rounded-xl hover:bg-surface-100 transition-all duration-200 border border-surface-200">Batal</button>
+          <button type="submit" id="form-submit" class="flex-1 bg-brand-600 text-white font-semibold py-3 rounded-xl hover:bg-brand-700 transition-all duration-200 shadow-sm hover:shadow-md">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('modal')!;
+  const modalTitle = document.getElementById('modal-title')!;
+  const formId = document.getElementById('form-id') as HTMLInputElement;
+  const formName = document.getElementById('form-name') as HTMLInputElement;
+  const formCalories = document.getElementById('form-calories') as HTMLInputElement;
+  const formProtein = document.getElementById('form-protein') as HTMLInputElement;
+  const formCarbo = document.getElementById('form-carbo') as HTMLInputElement;
+  const formFat = document.getElementById('form-fat') as HTMLInputElement;
+  const formFiber = document.getElementById('form-fiber') as HTMLInputElement;
+  const formSugar = document.getElementById('form-sugar') as HTMLInputElement;
+  const formSodium = document.getElementById('form-sodium') as HTMLInputElement;
+  const formRefweight = document.getElementById('form-refweight') as HTMLInputElement;
+  const formError = document.getElementById('form-error')!;
+  const form = document.getElementById('nutrition-form') as HTMLFormElement;
+
+  function openModal(editMode = false, data: Record<string, string> = {}) {
+    modal.classList.remove('hidden');
+    modalTitle.textContent = editMode ? 'Edit Data Nutrisi' : 'Tambah Data Nutrisi';
+    formId.value = data.id ?? '';
+    formName.value = data.name ?? '';
+    formCalories.value = data.calories ?? '0';
+    formProtein.value = data.protein ?? '0';
+    formCarbo.value = data.carbo ?? '0';
+    formFat.value = data.fat ?? '0';
+    formFiber.value = data.fiber ?? '0';
+    formSugar.value = data.sugar ?? '0';
+    formSodium.value = data.sodium ?? '0';
+    formRefweight.value = data.refweight ?? '100';
+    formError.classList.add('hidden');
+  }
+
+  function closeModal() { modal.classList.add('hidden'); }
+
+  document.getElementById('add-btn')?.addEventListener('click', () => openModal());
+  document.getElementById('add-btn-empty')?.addEventListener('click', () => openModal());
+  document.getElementById('modal-close')?.addEventListener('click', closeModal);
+  document.getElementById('modal-cancel')?.addEventListener('click', closeModal);
+  document.getElementById('modal-overlay')?.addEventListener('click', closeModal);
+
+  document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const b = btn as HTMLElement;
+      openModal(true, {
+        id: b.dataset.id!, name: b.dataset.name!, calories: b.dataset.calories!,
+        protein: b.dataset.protein!, carbo: b.dataset.carbo!, fat: b.dataset.fat!,
+        fiber: b.dataset.fiber!, sugar: b.dataset.sugar!, sodium: b.dataset.sodium!,
+        refweight: b.dataset.refweight!,
+      });
+    });
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = (btn as HTMLElement).dataset.id;
+      if (!id || !confirm('Hapus data nutrisi ini?')) return;
+      const row = btn.closest('tr');
+      if (row) (row as HTMLElement).style.opacity = '0.5';
+      const res = await fetch(`/api/nutrition/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        if (row) {
+          (row as HTMLElement).style.transition = 'all 300ms ease';
+          (row as HTMLElement).style.transform = 'translateX(20px)';
+          (row as HTMLElement).style.opacity = '0';
+          setTimeout(() => row.remove(), 300);
+        }
+      } else {
+        if (row) (row as HTMLElement).style.opacity = '1';
+        alert('Gagal menghapus.');
+      }
+    });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = formId.value;
+    const body = {
+      foodName: formName.value.trim(),
+      calories: parseFloat(formCalories.value) || 0,
+      protein: parseFloat(formProtein.value) || 0,
+      carbohydrates: parseFloat(formCarbo.value) || 0,
+      fat: parseFloat(formFat.value) || 0,
+      fiber: parseFloat(formFiber.value) || 0,
+      sugar: parseFloat(formSugar.value) || 0,
+      sodium: parseFloat(formSodium.value) || 0,
+      referenceWeightGram: parseFloat(formRefweight.value) || 100,
+    };
+
+    const url = id ? `/api/nutrition/${id}` : '/api/nutrition';
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(url, { method, body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Gagal menyimpan');
+      closeModal();
+      window.location.reload();
+    } catch (err) {
+      formError.classList.remove('hidden');
+      formError.textContent = err instanceof Error ? err.message : 'Terjadi kesalahan';
+    }
+  });
+</script>

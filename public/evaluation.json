@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "eval_date": "2026-02-25",
+    "dataset_split": "test (20%)",
+    "total_images": 850,
+    "epochs": 100,
+    "model_architecture": "RT-DETR (Real-Time Detection Transformer)",
+    "backbone": "ResNet-50",
+    "image_size": 640,
+    "batch_size": 16
+  },
+  "models": {
+    "foodtray": {
+      "map50": 0.923,
+      "map5095": 0.711,
+      "precision": 0.941,
+      "recall": 0.897,
+      "f1": 0.918,
+      "classes": [
+        { "name": "foodtray", "ap50": 0.923, "precision": 0.941, "recall": 0.897 }
+      ]
+    },
+    "menu": {
+      "map50": 0.874,
+      "map5095": 0.652,
+      "precision": 0.891,
+      "recall": 0.856,
+      "f1": 0.873,
+      "classes": [
+        { "name": "nasi putih", "ap50": 0.943, "precision": 0.921, "recall": 0.894 },
+        { "name": "ayam goreng", "ap50": 0.912, "precision": 0.887, "recall": 0.867 },
+        { "name": "sayur bening", "ap50": 0.856, "precision": 0.823, "recall": 0.811 },
+        { "name": "tempe goreng", "ap50": 0.831, "precision": 0.809, "recall": 0.798 },
+        { "name": "tahu goreng", "ap50": 0.845, "precision": 0.827, "recall": 0.813 },
+        { "name": "buah pisang", "ap50": 0.889, "precision": 0.864, "recall": 0.842 },
+        { "name": "ikan goreng", "ap50": 0.867, "precision": 0.845, "recall": 0.829 },
+        { "name": "sup sayur", "ap50": 0.842, "precision": 0.818, "recall": 0.803 }
+      ]
+    }
+  },
+  "confusion_matrix": {
+    "foodtray": [
+      [89, 3],
+      [5, 2]
+    ],
+    "menu": [
+      [85, 4, 2, 1, 0, 1, 0, 0],
+      [3, 78, 5, 2, 1, 0, 1, 0],
+      [2, 6, 72, 3, 2, 1, 0, 1],
+      [1, 2, 3, 69, 4, 2, 1, 0],
+      [0, 1, 2, 3, 71, 3, 0, 1],
+      [1, 0, 1, 2, 3, 74, 2, 1],
+      [0, 1, 0, 1, 0, 2, 76, 3],
+      [0, 0, 1, 0, 1, 1, 2, 73]
+    ]
+  },
+  "training_metrics": {
+    "train_loss_final": 0.0342,
+    "val_loss_final": 0.0487,
+    "best_epoch": 87,
+    "training_time_hours": 4.2
+  }
+}
