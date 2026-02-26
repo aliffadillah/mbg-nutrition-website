@@ -87,12 +87,13 @@ import PublicLayout from '../layouts/PublicLayout.astro';
                 </div>
               </div>
               <!-- Nutrition mini bar -->
-              <div class="grid grid-cols-4 gap-3">
+              <div class="grid grid-cols-5 gap-3">
                 {[
                   { val: '487', unit: 'kkal', label: 'Kalori',  gradient: 'from-orange-500 to-amber-400' },
                   { val: '28.3', unit: 'g', label: 'Protein', gradient: 'from-blue-500 to-indigo-400' },
                   { val: '62.1', unit: 'g', label: 'Karbo',   gradient: 'from-emerald-500 to-teal-400' },
                   { val: '12.8', unit: 'g', label: 'Lemak',   gradient: 'from-rose-500 to-pink-400' },
+                  { val: '3.5',  unit: 'g', label: 'Serat',   gradient: 'from-teal-500 to-cyan-400' },
                 ].map(n => (
                   <div class="text-center p-3 bg-white/10 rounded-xl border border-white/10">
                     <p class="text-sm font-bold text-white">{n.val}<span class="text-[10px] text-brand-200/60 ml-0.5">{n.unit}</span></p>
@@ -188,7 +189,7 @@ import PublicLayout from '../layouts/PublicLayout.astro';
           {[
             { step: '01', title: 'Unggah Foto', desc: 'Upload foto menu dari kamera atau galeri perangkat Anda.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>` },
             { step: '02', title: 'Deteksi AI', desc: 'Model RT-DETR mendeteksi setiap item menu dan foodtray.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z"/></svg>` },
-            { step: '03', title: 'Hitung Gizi', desc: 'Kalori, protein, karbohidrat, lemak dihitung otomatis.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"/></svg>` },
+            { step: '03', title: 'Hitung Gizi', desc: 'Kalori, protein, karbohidrat, lemak, dan serat dihitung otomatis.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"/></svg>` },
             { step: '04', title: 'Simpan & Monitor', desc: 'Hasil tersimpan dan dipantau via dashboard analytics.', icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/></svg>` },
           ].map(item => (
             <div class="flex flex-col items-center text-center group">
@@ -222,7 +223,7 @@ import PublicLayout from '../layouts/PublicLayout.astro';
           { value: 'RT-DETR', label: 'Arsitektur Model', sub: 'Real-Time Detection Transformer' },
           { value: '2', label: 'Model Tersedia', sub: 'Foodtray & Menu Detector' },
           { value: '0.6', label: 'Confidence Threshold', sub: 'Minimum deteksi item valid' },
-          { value: '4+', label: 'Nutrisi Dihitung', sub: 'Kalori, Protein, Karbo, Lemak' },
+          { value: '5', label: 'Nutrisi Dihitung', sub: 'Kalori, Protein, Karbo, Lemak, Serat' },
         ].map(stat => (
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/10 hover:bg-white/15 transition-all duration-300 hover:-translate-y-1">
             <p class="text-2xl lg:text-3xl font-extrabold text-white mb-2">{stat.value}</p>
@@ -312,10 +313,41 @@ import PublicLayout from '../layouts/PublicLayout.astro';
 
           <!-- ── Panel Hasil: awalnya tersembunyi (w-0), muncul setelah deteksi ── -->
           <div id="results-panel" class="flex flex-col gap-5 flex-shrink-0 transition-all duration-500 ease-in-out overflow-hidden" style="width:0;opacity:0">
-            <!-- Estimasi Nilai Gizi (inline row) -->
+            <!-- Estimasi Nilai Gizi — split Porsi Besar & Porsi Kecil -->
             <div class="bg-white rounded-2xl border border-surface-100 p-6 shadow-soft">
-              <h3 class="font-bold text-surface-900 mb-4 text-[15px]">Estimasi Nilai Gizi</h3>
-              <div id="nutrition-list" class="flex flex-col divide-y divide-surface-50"></div>
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="font-bold text-surface-900 text-[15px]">Estimasi Nilai Gizi</h3>
+                <span id="portion-match-info" class="text-xs font-medium text-surface-400"></span>
+              </div>
+              <p id="matched-menu-name" class="text-xs text-brand-600 font-medium mb-4"></p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Porsi Besar -->
+                <div class="rounded-xl border border-orange-200 bg-orange-50/40 p-4">
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-6 h-6 rounded-md bg-orange-100 flex items-center justify-center">
+                      <svg class="w-3.5 h-3.5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5"/></svg>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-surface-800 text-xs">Porsi Besar</h4>
+                      <p class="text-[10px] text-surface-400">SMP/SMA & Dewasa</p>
+                    </div>
+                  </div>
+                  <div id="porsi-besar-list" class="flex flex-col gap-1.5"></div>
+                </div>
+                <!-- Porsi Kecil -->
+                <div class="rounded-xl border border-sky-200 bg-sky-50/40 p-4">
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-6 h-6 rounded-md bg-sky-100 flex items-center justify-center">
+                      <svg class="w-3.5 h-3.5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 5.25l-7.5 7.5-7.5-7.5m15 6l-7.5 7.5-7.5-7.5"/></svg>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-surface-800 text-xs">Porsi Kecil</h4>
+                      <p class="text-[10px] text-surface-400">TK/SD & Anak-anak</p>
+                    </div>
+                  </div>
+                  <div id="porsi-kecil-list" class="flex flex-col gap-1.5"></div>
+                </div>
+              </div>
             </div>
 
             <!-- Item Terdeteksi -->
@@ -332,10 +364,12 @@ import PublicLayout from '../layouts/PublicLayout.astro';
                   <thead class="bg-surface-50 text-surface-500 text-xs uppercase">
                     <tr>
                       <th class="px-4 py-3 text-left font-semibold">Menu</th>
-                      <th class="px-4 py-3 text-right font-semibold">Conf.</th>
                       <th class="px-4 py-3 text-right font-semibold">Berat</th>
                       <th class="px-4 py-3 text-right font-semibold">Kalori</th>
                       <th class="px-4 py-3 text-right font-semibold">Protein</th>
+                      <th class="px-4 py-3 text-right font-semibold">Karbo</th>
+                      <th class="px-4 py-3 text-right font-semibold">Lemak</th>
+                      <th class="px-4 py-3 text-right font-semibold">Serat</th>
                     </tr>
                   </thead>
                   <tbody id="items-tbody" class="divide-y divide-surface-50 bg-white"></tbody>
@@ -364,7 +398,10 @@ import PublicLayout from '../layouts/PublicLayout.astro';
   const loadingState = document.getElementById('loading-state')!;
   const errorState = document.getElementById('error-state')!;
   const errorMessage = document.getElementById('error-message')!;
-  const nutritionList = document.getElementById('nutrition-list')!;
+  const porsiBesarList = document.getElementById('porsi-besar-list')!;
+  const porsiKecilList = document.getElementById('porsi-kecil-list')!;
+  const matchedMenuName = document.getElementById('matched-menu-name')!;
+  const portionMatchInfo = document.getElementById('portion-match-info')!;
   const itemsTbody = document.getElementById('items-tbody')!;
   const backBtn = document.getElementById('back-btn')!;
 
@@ -463,38 +500,96 @@ import PublicLayout from '../layouts/PublicLayout.astro';
 
       if (!data.success) throw new Error(data.error ?? 'Detection failed');
 
-      // Render nutrisi sebagai baris inline
-      const n = data.nutrition_totals ?? { calories: 0, protein: 0, carbohydrates: 0, fat: 0 };
-      const nutrients = [
-        { icon: '🔥', label: 'Kalori',      value: n.calories,      unit: 'kkal', valueColor: 'text-orange-600' },
-        { icon: '💪', label: 'Protein',     value: n.protein,       unit: 'g',    valueColor: 'text-blue-600' },
-        { icon: '🌾', label: 'Karbohidrat', value: n.carbohydrates, unit: 'g',    valueColor: 'text-amber-600' },
-        { icon: '🫒', label: 'Lemak',       value: n.fat,           unit: 'g',    valueColor: 'text-emerald-600' },
-      ];
-      nutritionList.innerHTML = nutrients.map(item => `
-        <div class="flex items-center justify-between py-3">
-          <div class="flex items-center gap-3">
-            <span class="text-lg">${item.icon}</span>
-            <span class="text-sm font-medium text-surface-600">${item.label}</span>
-          </div>
-          <span class="font-bold ${item.valueColor} whitespace-nowrap shrink-0">${item.value} <span class="text-xs font-normal text-surface-400">${item.unit}</span></span>
-        </div>
-      `).join('');
+      // ─── Merge duplicate items ───────────────────────────────────────────
+      type RawItem = { food_name: string; confidence: number; estimated_weight_gram: number; calories: number; protein: number; carbohydrates: number; fat: number; fiber: number; };
+      const rawItems: RawItem[] = data.nutrition_items ?? [];
+      interface MergedItem extends RawItem { qty: number; }
+      const mergedMap = new Map<string, MergedItem>();
+      for (const item of rawItems) {
+        const key = item.food_name.toLowerCase();
+        if (mergedMap.has(key)) {
+          const m = mergedMap.get(key)!;
+          m.qty += 1;
+          m.confidence = (m.confidence * (m.qty - 1) + item.confidence) / m.qty; // running avg
+          m.estimated_weight_gram += item.estimated_weight_gram;
+          m.calories += item.calories;
+          m.protein += item.protein;
+          m.carbohydrates += item.carbohydrates;
+          m.fat += item.fat;
+          m.fiber += item.fiber;
+        } else {
+          mergedMap.set(key, { ...item, qty: 1 });
+        }
+      }
+      const mergedItems = Array.from(mergedMap.values());
 
-      // Render tabel item
-      const items = data.nutrition_items ?? [];
-      if (items.length > 0) {
-        itemsTbody.innerHTML = items.map((item: { food_name: string; confidence: number; estimated_weight_gram: number; calories: number; protein: number; }) => `
+      // ─── Render Estimasi Nilai Gizi — Porsi Besar vs Porsi Kecil ────────
+      const n = data.nutrition_totals ?? { calories: 0, protein: 0, carbohydrates: 0, fat: 0, fiber: 0 };
+      const menu = data.matched_daily_menu;
+      const nutrientsDef = [
+        { icon: '🔥', label: 'Kalori', key: 'calories', unit: 'kkal', color: 'orange' },
+        { icon: '💪', label: 'Protein', key: 'protein', unit: 'g', color: 'blue' },
+        { icon: '🌾', label: 'Karbo', key: 'carbohydrates', unit: 'g', color: 'amber' },
+        { icon: '🫒', label: 'Lemak', key: 'fat', unit: 'g', color: 'emerald' },
+        { icon: '🥬', label: 'Serat', key: 'fiber', unit: 'g', color: 'teal' },
+      ];
+
+      function renderPortionNutrients(portion: any, totals: any): string {
+        return nutrientsDef.map(nd => {
+          const ref = portion?.[nd.key] ?? 0;
+          const est = totals[nd.key] ?? 0;
+          const ratio = ref > 0 ? (est / ref) * 100 : 0;
+          const pct = Math.min(ratio, 100);
+          const barColor = ratio > 120 ? 'bg-rose-400' : ratio >= 80 ? 'bg-emerald-400' : 'bg-amber-400';
+          return `
+            <div class="flex items-center gap-2">
+              <span class="text-xs">${nd.icon}</span>
+              <span class="text-[11px] font-medium text-surface-500 w-12 shrink-0">${nd.label}</span>
+              <div class="flex-1 h-1.5 bg-surface-100 rounded-full overflow-hidden">
+                <div class="${barColor} h-full rounded-full transition-all duration-500" style="width:${pct.toFixed(0)}%"></div>
+              </div>
+              <span class="text-[11px] font-bold text-surface-700 w-14 text-right">${ref} <span class="font-normal text-surface-400">${nd.unit}</span></span>
+            </div>`;
+        }).join('');
+      }
+
+      if (menu) {
+        matchedMenuName.textContent = menu.menuName;
+        portionMatchInfo.textContent = `Kecocokan ${Math.round(menu.matchScore * 100)}%`;
+        porsiBesarList.innerHTML = renderPortionNutrients(menu.porsi_besar, n);
+        porsiKecilList.innerHTML = renderPortionNutrients(menu.porsi_kecil, n);
+      } else {
+        matchedMenuName.textContent = 'Menu tidak dikenali dari database';
+        portionMatchInfo.textContent = '';
+        // Show estimated totals only (no reference comparison)
+        const summaryHtml = nutrientsDef.map(nd => `
+          <div class="flex items-center justify-between py-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs">${nd.icon}</span>
+              <span class="text-[11px] font-medium text-surface-500">${nd.label}</span>
+            </div>
+            <span class="text-[11px] font-bold text-surface-700">${parseFloat((n[nd.key] ?? 0).toFixed(1))} <span class="font-normal text-surface-400">${nd.unit}</span></span>
+          </div>
+        `).join('');
+        porsiBesarList.innerHTML = summaryHtml;
+        porsiKecilList.innerHTML = summaryHtml;
+      }
+
+      // ─── Render merged items table ──────────────────────────────────────
+      if (mergedItems.length > 0) {
+        itemsTbody.innerHTML = mergedItems.map(item => `
           <tr class="hover:bg-surface-50 transition-colors">
             <td class="px-4 py-3 font-semibold text-surface-900 capitalize">${item.food_name}</td>
-            <td class="px-4 py-3 text-right text-surface-500">${(item.confidence * 100).toFixed(1)}%</td>
-            <td class="px-4 py-3 text-right text-surface-500">${item.estimated_weight_gram}g</td>
-            <td class="px-4 py-3 text-right text-surface-500">${item.calories}</td>
-            <td class="px-4 py-3 text-right text-surface-500">${item.protein}g</td>
+            <td class="px-4 py-3 text-right text-surface-500">${parseFloat(Number(item.estimated_weight_gram).toFixed(2))}g</td>
+            <td class="px-4 py-3 text-right text-surface-500">${parseFloat(Number(item.calories).toFixed(2))}</td>
+            <td class="px-4 py-3 text-right text-surface-500">${parseFloat(Number(item.protein).toFixed(2))}g</td>
+            <td class="px-4 py-3 text-right text-surface-500">${parseFloat(Number(item.carbohydrates).toFixed(2))}g</td>
+            <td class="px-4 py-3 text-right text-surface-500">${parseFloat(Number(item.fat).toFixed(2))}g</td>
+            <td class="px-4 py-3 text-right text-surface-500">${parseFloat(Number(item.fiber).toFixed(2))}g</td>
           </tr>
         `).join('');
       } else {
-        itemsTbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-surface-400">Tidak ada item terdeteksi.</td></tr>`;
+        itemsTbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-surface-400">Tidak ada item terdeteksi.</td></tr>`;
       }
 
       // Animasi: upload menyempit, panel hasil terbuka

@@ -18,16 +18,16 @@ export default {
           950: '#022c22',
         },
         surface: {
-          50:  '#faf8f5',
-          100: '#f3efe8',
-          200: '#e8e2d8',
-          300: '#d5cdc0',
-          400: '#a89f90',
-          500: '#7c7267',
-          600: '#5c5347',
-          700: '#494136',
-          800: '#332d25',
-          900: '#1f1b16',
+          50:  '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
         },
         accent: {
           blue:   '#6366f1',
@@ -37,11 +37,11 @@ export default {
           teal:   '#14b8a6',
           sky:    '#0ea5e9',
         },
-        // Warm background tones
+        // Neutral background tones
         cream: {
-          50:  '#fefcf8',
-          100: '#fdf8ef',
-          200: '#faf0dc',
+          50:  '#f9fafb',
+          100: '#f3f4f6',
+          200: '#e5e7eb',
         },
       },
       fontFamily: {

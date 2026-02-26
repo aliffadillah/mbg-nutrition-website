@@ -14,5 +14,10 @@ export default defineConfig({
     port: 4321,
     host: true,
   },
+  vite: {
+    server: {
+      strictPort: false, // otomatis pakai port berikutnya jika 4321 sedang sibuk
+    },
+  },
 });
 

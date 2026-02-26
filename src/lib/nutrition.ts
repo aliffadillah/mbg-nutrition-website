@@ -149,3 +149,114 @@ export function sumNutrition(items: NutritionCalculation[]): TotalNutrition {
     { calories: 0, protein: 0, carbohydrates: 0, fat: 0, fiber: 0 }
   );
 }
+
+// ─── Daily Menu Matching ────────────────────────────────────────────────────
+
+export interface PortionInfo {
+  calories: number;
+  protein: number;
+  carbohydrates: number;
+  fat: number;
+  fiber: number;
+}
+
+export interface MatchedDailyMenu {
+  menuName: string;
+  menuItems: string[];
+  matchScore: number;              // 0.0 – 1.0 how many items matched
+  porsi_besar: PortionInfo;
+  porsi_kecil: PortionInfo;
+  closestPortion: 'porsi_besar' | 'porsi_kecil';
+  portionLabel: string;            // human-readable
+  calorieDeviation: number;        // % deviation from closest portion
+}
+
+/**
+ * Match detected food items against daily menus in the database.
+ * Returns the best matching daily menu with both portion references.
+ */
+export async function matchDailyMenu(
+  detectedFoodNames: string[],
+  estimatedTotalCalories: number
+): Promise<MatchedDailyMenu | null> {
+  const { dailyMenus } = await import('../db/schema');
+
+  const allMenus = await db
+    .select()
+    .from(dailyMenus)
+    .orderBy(dailyMenus.menuName);
+
+  if (allMenus.length === 0) return null;
+
+  // Group by menuName
+  const menuMap = new Map<string, {
+    menuItems: string[];
+    porsi_besar?: PortionInfo;
+    porsi_kecil?: PortionInfo;
+  }>();
+
+  for (const row of allMenus) {
+    if (!menuMap.has(row.menuName)) {
+      menuMap.set(row.menuName, {
+        menuItems: JSON.parse(row.menuItems || '[]'),
+      });
+    }
+    const entry = menuMap.get(row.menuName)!;
+    const portion: PortionInfo = {
+      calories: parseFloat(String(row.calories)),
+      protein: parseFloat(String(row.protein)),
+      carbohydrates: parseFloat(String(row.carbohydrates)),
+      fat: parseFloat(String(row.fat)),
+      fiber: parseFloat(String(row.fiber)),
+    };
+    if (row.portionSize === 'porsi_besar') entry.porsi_besar = portion;
+    if (row.portionSize === 'porsi_kecil') entry.porsi_kecil = portion;
+  }
+
+  // Find best match by item overlap
+  const normalizedDetected = detectedFoodNames.map(n => n.toLowerCase().trim());
+  let bestMatch: MatchedDailyMenu | null = null;
+  let bestScore = 0;
+
+  for (const [menuName, menu] of menuMap) {
+    if (!menu.porsi_besar || !menu.porsi_kecil) continue;
+
+    const normalizedMenuItems = menu.menuItems.map(n => n.toLowerCase().trim());
+    const matchedCount = normalizedMenuItems.filter(item =>
+      normalizedDetected.includes(item)
+    ).length;
+
+    const score = normalizedMenuItems.length > 0
+      ? matchedCount / normalizedMenuItems.length
+      : 0;
+
+    if (score > bestScore) {
+      bestScore = score;
+
+      // Determine closest portion by calorie difference
+      const diffBesar = Math.abs(estimatedTotalCalories - menu.porsi_besar.calories);
+      const diffKecil = Math.abs(estimatedTotalCalories - menu.porsi_kecil.calories);
+      const closestPortion = diffBesar <= diffKecil ? 'porsi_besar' : 'porsi_kecil';
+      const closestCalories = closestPortion === 'porsi_besar'
+        ? menu.porsi_besar.calories
+        : menu.porsi_kecil.calories;
+      const deviation = closestCalories > 0
+        ? parseFloat((((estimatedTotalCalories - closestCalories) / closestCalories) * 100).toFixed(1))
+        : 0;
+
+      bestMatch = {
+        menuName,
+        menuItems: menu.menuItems,
+        matchScore: parseFloat(score.toFixed(2)),
+        porsi_besar: menu.porsi_besar,
+        porsi_kecil: menu.porsi_kecil,
+        closestPortion,
+        portionLabel: closestPortion === 'porsi_besar' ? 'Porsi Besar' : 'Porsi Kecil',
+        calorieDeviation: deviation,
+      };
+    }
+  }
+
+  // Only return if at least 50% items matched
+  return bestMatch && bestMatch.matchScore >= 0.5 ? bestMatch : null;
+}

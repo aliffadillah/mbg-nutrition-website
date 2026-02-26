@@ -1,8 +1,26 @@
 import bcrypt from 'bcryptjs';
-import { db } from '../db/db';
-import { users } from '../db/schema';
-import { eq } from 'drizzle-orm';
-import type { User } from '../db/schema';
+import { createClient } from '@supabase/supabase-js';
+
+// Gunakan Supabase HTTP client (bukan direct PostgreSQL) untuk menghindari ENOTFOUND
+function getEnv(key: string): string {
+  return (typeof import.meta !== 'undefined' && (import.meta as any).env?.[key])
+    ?? process.env[key]
+    ?? '';
+}
+
+function getAdminSupabase() {
+  return createClient(getEnv('SUPABASE_URL'), getEnv('SUPABASE_SERVICE_ROLE_KEY'));
+}
+
+export type User = {
+  id: number;
+  username: string;
+  password: string;
+  full_name: string;
+  role: string;
+  created_at: string;
+  updated_at: string;
+};
 
 const SALT_ROUNDS = 12;
 const SESSION_COOKIE = 'mbg_session';
@@ -69,15 +87,29 @@ export function getSessionFromRequest(request: Request): { userId: number; usern
   return parseSessionToken(token);
 }
 
-// ─── DB helpers ───────────────────────────────────────────────────────────────
+// ─── DB helpers (menggunakan Supabase HTTP API, bukan direct PostgreSQL) ───────
 export async function findUserByUsername(username: string): Promise<User | null> {
-  const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
-  return result[0] ?? null;
+  const supabase = getAdminSupabase();
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('username', username)
+    .limit(1)
+    .single();
+  if (error || !data) return null;
+  return data as User;
 }
 
 export async function findUserById(id: number): Promise<User | null> {
-  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
-  return result[0] ?? null;
+  const supabase = getAdminSupabase();
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', id)
+    .limit(1)
+    .single();
+  if (error || !data) return null;
+  return data as User;
 }
 
 export async function validateLogin(

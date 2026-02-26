@@ -87,6 +87,21 @@ export const foodNutritionRelations = relations(foodNutrition, ({ many }) => ({
   detectionItems: many(detectionItems),
 }));
 
+// ─── Daily Menus ──────────────────────────────────────────────────────────────
+export const dailyMenus = pgTable('daily_menus', {
+  id: serial('id').primaryKey(),
+  menuName: varchar('menu_name', { length: 50 }).notNull(),             // e.g. "Menu 1"
+  menuItems: text('menu_items').notNull().default('[]'),                // JSON array of food names
+  portionSize: varchar('portion_size', { length: 20 }).notNull(),       // "porsi_besar" | "porsi_kecil"
+  calories: numeric('calories', { precision: 8, scale: 2 }).notNull().default('0'),
+  protein: numeric('protein', { precision: 8, scale: 2 }).notNull().default('0'),
+  carbohydrates: numeric('carbohydrates', { precision: 8, scale: 2 }).notNull().default('0'),
+  fat: numeric('fat', { precision: 8, scale: 2 }).notNull().default('0'),
+  fiber: numeric('fiber', { precision: 8, scale: 2 }).notNull().default('0'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -96,3 +111,5 @@ export type Detection = typeof detections.$inferSelect;
 export type NewDetection = typeof detections.$inferInsert;
 export type DetectionItem = typeof detectionItems.$inferSelect;
 export type NewDetectionItem = typeof detectionItems.$inferInsert;
+export type DailyMenu = typeof dailyMenus.$inferSelect;
+export type NewDailyMenu = typeof dailyMenus.$inferInsert;

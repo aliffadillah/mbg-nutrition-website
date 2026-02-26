@@ -12,29 +12,29 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         </div>
         <div>
           <h2 class="text-xl font-bold text-brand-900">Deteksi Nutrisi Menu</h2>
-          <p class="text-brand-600/60 text-sm">Upload foto menu untuk deteksi otomatis dan estimasi nutrisi</p>
+          <p class="text-emerald-700 text-sm">Upload foto menu untuk deteksi otomatis dan estimasi nutrisi</p>
         </div>
       </div>
     </div>
 
     <!-- Upload & Detect Panel -->
-    <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft p-6 mb-6">
+    <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft p-6 mb-6">
       <div
         id="drop-zone"
-        class="border-2 border-dashed border-brand-200 rounded-2xl p-10 text-center hover:border-brand-400 hover:bg-brand-50/30 transition-all duration-300 cursor-pointer group"
+        class="border-2 border-dashed border-emerald-300 rounded-2xl p-10 text-center hover:border-emerald-500 hover:bg-emerald-50 transition-all duration-300 cursor-pointer group"
       >
         <div id="upload-prompt">
           <div class="w-16 h-16 rounded-2xl bg-brand-50 group-hover:bg-brand-100 flex items-center justify-center mx-auto mb-5 transition-colors duration-300">
             <svg class="w-8 h-8 text-brand-300 group-hover:text-brand-500 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
           </div>
           <p class="font-semibold text-brand-900 text-lg">Seret & Lepas foto menu di sini</p>
-          <p class="text-sm text-brand-600/60 mt-1 mb-5">atau klik untuk memilih file dari perangkat</p>
+          <p class="text-sm text-emerald-700 mt-1 mb-5">atau klik untuk memilih file dari perangkat</p>
           <label class="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-2.5 rounded-xl cursor-pointer hover:bg-brand-700 transition-all duration-200 font-semibold text-sm shadow-sm hover:shadow-md">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
             Pilih Foto
             <input id="image-input" type="file" accept="image/*" class="sr-only" />
           </label>
-          <p class="text-xs text-brand-300 mt-4">Format: JPG, PNG, WebP — Maks 10 MB</p>
+          <p class="text-xs text-emerald-400 mt-4">Format: JPG, PNG, WebP — Maks 10 MB</p>
         </div>
 
         <div id="preview-area" class="hidden">
@@ -55,7 +55,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
           id="notes"
           rows="2"
           placeholder="Contoh: Makan siang siswi kelas 4A SDN 01..."
-          class="w-full px-4 py-3 border border-brand-200/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400 text-brand-900 resize-none placeholder:text-brand-300/50 transition-all duration-200"
+          class="w-full px-4 py-3 border border-emerald-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 text-slate-900 resize-none placeholder:text-slate-400 transition-all duration-200"
         ></textarea>
       </div>
 
@@ -72,7 +72,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         <button
           id="preview-btn"
           disabled
-          class="flex-1 sm:flex-none bg-cream-100 text-brand-700 font-semibold px-6 py-3 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-cream-200 transition-all duration-200 flex items-center justify-center gap-2 border border-brand-200/50"
+          class="flex-1 sm:flex-none bg-slate-100 text-emerald-800 font-semibold px-6 py-3 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-200 transition-all duration-200 flex items-center justify-center gap-2 border border-emerald-200"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           Preview Saja
@@ -81,7 +81,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     </div>
 
     <!-- Loading -->
-    <div id="loading" class="hidden bg-white border border-brand-100 rounded-2xl p-5 items-center gap-4 mb-6 shadow-soft" data-display="flex">
+    <div id="loading" class="hidden bg-white border border-emerald-200 rounded-2xl p-5 items-center gap-4 mb-6 shadow-soft" data-display="flex">
       <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center shrink-0">
         <svg class="animate-spin w-5 h-5 text-brand-600" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
@@ -108,7 +108,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     </div>
 
     <!-- Success notification -->
-    <div id="success-box" class="hidden bg-white border border-brand-200 rounded-2xl p-5 mb-6 items-center gap-3 shadow-soft" data-display="flex">
+    <div id="success-box" class="hidden bg-white border border-emerald-300 rounded-2xl p-5 mb-6 items-center gap-3 shadow-soft" data-display="flex">
       <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
         <svg class="w-4 h-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       </div>
@@ -121,18 +121,18 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     <!-- Results -->
     <div id="results" class="hidden space-y-6 animate-fade-in">
       <!-- Annotated image -->
-      <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft p-6">
+      <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft p-6">
         <div class="flex items-center gap-2 mb-4">
           <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">
             <svg class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
           </div>
           <h3 class="font-semibold text-brand-900">Hasil Anotasi</h3>
         </div>
-        <img id="annotated-img" src="" alt="Annotated result" class="w-full rounded-xl border border-brand-100/50 max-h-96 object-contain bg-cream-50" />
+        <img id="annotated-img" src="" alt="Annotated result" class="w-full rounded-xl border border-emerald-200 max-h-96 object-contain bg-slate-50" />
       </div>
 
       <!-- Nutrition totals -->
-      <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft p-6">
+      <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft p-6">
         <div class="flex items-center gap-2 mb-4">
           <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
             <svg class="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6"/></svg>
@@ -143,8 +143,8 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
       </div>
 
       <!-- Detection summary -->
-      <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft overflow-hidden">
-        <div class="px-6 py-4 border-b border-brand-100/50 flex items-center gap-2">
+      <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft overflow-hidden">
+        <div class="px-6 py-4 border-b border-emerald-200 flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
             <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
           </div>
@@ -152,20 +152,87 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full text-sm">
-            <thead class="bg-brand-50/60">
+            <thead class="bg-emerald-50">
               <tr>
-                <th class="px-5 py-3 text-left text-xs font-medium text-brand-600/60 uppercase tracking-wider">Menu</th>
-                <th class="px-5 py-3 text-left text-xs font-medium text-brand-600/60 uppercase tracking-wider">Database</th>
-                <th class="px-5 py-3 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Conf.</th>
-                <th class="px-5 py-3 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Berat</th>
-                <th class="px-5 py-3 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Kalori</th>
-                <th class="px-5 py-3 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Protein</th>
-                <th class="px-5 py-3 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Karbo</th>
-                <th class="px-5 py-3 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Lemak</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-emerald-700 uppercase tracking-wider">Menu</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-emerald-700 uppercase tracking-wider">Database</th>
+                <th class="px-5 py-3 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Berat</th>
+                <th class="px-5 py-3 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Kalori</th>
+                <th class="px-5 py-3 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Protein</th>
+                <th class="px-5 py-3 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Karbo</th>
+                <th class="px-5 py-3 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Lemak</th>
+                <th class="px-5 py-3 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Serat</th>
               </tr>
             </thead>
             <tbody id="items-tbody" class="divide-y divide-surface-100 bg-white"></tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Portion reference card (Porsi Besar vs Porsi Kecil) -->
+      <div id="portion-ref" class="hidden bg-white rounded-2xl border border-emerald-200 shadow-soft overflow-hidden">
+        <div class="px-6 py-4 border-b border-emerald-200 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
+              <svg class="w-4 h-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-semibold text-brand-900">Referensi Porsi Menu Harian</h3>
+              <p id="portion-menu-name" class="text-xs text-emerald-600 font-medium"></p>
+            </div>
+          </div>
+          <span id="portion-match-badge" class="text-xs font-semibold px-3 py-1 rounded-full"></span>
+        </div>
+
+        <div class="p-6">
+          <!-- Menu items list -->
+          <div id="portion-menu-items" class="mb-5 flex flex-wrap gap-1.5"></div>
+
+          <!-- Portion comparison grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+            <!-- Porsi Besar -->
+            <div id="porsi-besar-card" class="rounded-xl border-2 p-4 transition-all duration-200">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5"/></svg>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-surface-800 text-sm">Porsi Besar</h4>
+                    <p class="text-xs text-surface-400">SMP / SMA & Dewasa</p>
+                  </div>
+                </div>
+                <span id="porsi-besar-badge" class="hidden text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700">Terdekat</span>
+              </div>
+              <div class="space-y-2" id="porsi-besar-nutrients"></div>
+            </div>
+
+            <!-- Porsi Kecil -->
+            <div id="porsi-kecil-card" class="rounded-xl border-2 p-4 transition-all duration-200">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-sky-100 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 5.25l-7.5 7.5-7.5-7.5m15 6l-7.5 7.5-7.5-7.5"/></svg>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-surface-800 text-sm">Porsi Kecil</h4>
+                    <p class="text-xs text-surface-400">TK / SD & Anak-anak</p>
+                  </div>
+                </div>
+                <span id="porsi-kecil-badge" class="hidden text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700">Terdekat</span>
+              </div>
+              <div class="space-y-2" id="porsi-kecil-nutrients"></div>
+            </div>
+          </div>
+
+          <!-- Deviation indicator -->
+          <div id="portion-deviation" class="rounded-xl bg-surface-50 p-4 flex items-center gap-3">
+            <div id="deviation-icon" class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"></div>
+            <div>
+              <p id="deviation-text" class="text-sm font-semibold text-surface-800"></p>
+              <p id="deviation-detail" class="text-xs text-surface-400 mt-0.5"></p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -194,6 +261,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
   const annotatedImg = document.getElementById('annotated-img') as HTMLImageElement;
   const nutritionGrid = document.getElementById('nutrition-grid')!;
   const itemsTbody = document.getElementById('items-tbody')!;
+  const portionRef = document.getElementById('portion-ref')!;
 
   let selectedFile: File | null = null;
 
@@ -235,6 +303,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     hide(errorBox);
     hide(successBox);
     resultsDiv.classList.add('hidden');
+    portionRef.classList.add('hidden');
   }
 
   function showError(msg: string) {
@@ -246,11 +315,11 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
   imageInput.addEventListener('change', () => { if (imageInput.files?.[0]) showFile(imageInput.files[0]); });
   clearBtn.addEventListener('click', clearFile);
 
-  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-brand-400', 'bg-brand-50/30'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-brand-400', 'bg-brand-50/30'));
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-emerald-500', 'bg-emerald-50'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-emerald-500', 'bg-emerald-50'));
   dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
-    dropZone.classList.remove('border-brand-400', 'bg-brand-50/30');
+    dropZone.classList.remove('border-emerald-500', 'bg-emerald-50');
     const f = e.dataTransfer?.files?.[0];
     if (f && f.type.startsWith('image/')) showFile(f);
   });
@@ -327,8 +396,28 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         </div>
       `).join('');
 
-      // Items table
-      const items: Array<{ food_name: string; matched_food_name: string | null; confidence: number; estimated_weight_gram: number; calories: number; protein: number; carbohydrates: number; fat: number }> = data.nutrition_items ?? [];
+      // Items table — merge duplicates
+      type DItem = { food_name: string; matched_food_name: string | null; confidence: number; estimated_weight_gram: number; calories: number; protein: number; carbohydrates: number; fat: number; fiber: number };
+      const rawItems: DItem[] = data.nutrition_items ?? [];
+      interface MergedDItem extends DItem { qty: number; }
+      const mergedMap = new Map<string, MergedDItem>();
+      for (const item of rawItems) {
+        const key = item.food_name.toLowerCase();
+        if (mergedMap.has(key)) {
+          const m = mergedMap.get(key)!;
+          m.qty += 1;
+          m.confidence = (m.confidence * (m.qty - 1) + item.confidence) / m.qty;
+          m.estimated_weight_gram += item.estimated_weight_gram;
+          m.calories += item.calories;
+          m.protein += item.protein;
+          m.carbohydrates += item.carbohydrates;
+          m.fat += item.fat;
+          m.fiber += item.fiber;
+        } else {
+          mergedMap.set(key, { ...item, qty: 1 });
+        }
+      }
+      const items = Array.from(mergedMap.values());
       if (items.length === 0) {
         itemsTbody.innerHTML = `<tr><td colspan="8" class="px-5 py-8 text-center text-surface-300">Tidak ada item terdeteksi dalam database nutrisi.</td></tr>`;
       } else {
@@ -336,18 +425,21 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
           <tr class="hover:bg-surface-50 transition-colors">
             <td class="px-5 py-3.5 font-semibold text-surface-900 capitalize">${item.food_name}</td>
             <td class="px-5 py-3.5 text-xs">${item.matched_food_name ? `<span class="inline-flex items-center gap-1 text-brand-700 font-medium"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>${item.matched_food_name}</span>` : '<span class="text-surface-300">Tidak ditemukan</span>'}</td>
-            <td class="px-5 py-3.5 text-right"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${item.confidence >= 0.8 ? 'bg-brand-50 text-brand-700' : item.confidence >= 0.5 ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'}">${(item.confidence * 100).toFixed(1)}%</span></td>
-            <td class="px-5 py-3.5 text-right text-surface-600">${item.estimated_weight_gram}g</td>
-            <td class="px-5 py-3.5 text-right font-semibold text-amber-600">${item.calories}</td>
-            <td class="px-5 py-3.5 text-right text-surface-600">${item.protein}g</td>
-            <td class="px-5 py-3.5 text-right text-surface-600">${item.carbohydrates}g</td>
-            <td class="px-5 py-3.5 text-right text-surface-600">${item.fat}g</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.estimated_weight_gram).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right font-semibold text-amber-600">${parseFloat(Number(item.calories).toFixed(2))}</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.protein).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.carbohydrates).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.fat).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.fiber).toFixed(2))}g</td>
           </tr>
         `).join('');
       }
 
       resultsDiv.classList.remove('hidden');
       if (data.detection_id) show(successBox);
+
+      // Render portion reference card if a daily menu matched
+      renderPortionRef(data.matched_daily_menu, data.nutrition_totals);
     } catch (e) {
       showError(e instanceof Error ? e.message : 'Deteksi gagal. Pastikan API Python berjalan.');
     } finally {
@@ -357,4 +449,114 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
       btnText.textContent = 'Deteksi & Simpan';
     }
   });
+
+  // ─── Portion Reference Card ────────────────────────────────────────────────
+  function renderPortionRef(menu: any, totals: any) {
+    if (!menu) {
+      portionRef.classList.add('hidden');
+      return;
+    }
+
+    portionRef.classList.remove('hidden');
+
+    // Menu name & match badge
+    document.getElementById('portion-menu-name')!.textContent =
+      `${menu.menuName} — Kecocokan ${Math.round(menu.matchScore * 100)}%`;
+
+    const matchBadge = document.getElementById('portion-match-badge')!;
+    if (menu.matchScore >= 0.8) {
+      matchBadge.textContent = `${Math.round(menu.matchScore * 100)}% cocok`;
+      matchBadge.className = 'text-xs font-semibold px-3 py-1 rounded-full bg-brand-50 text-brand-700';
+    } else {
+      matchBadge.textContent = `${Math.round(menu.matchScore * 100)}% cocok`;
+      matchBadge.className = 'text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700';
+    }
+
+    // Menu items pills
+    const itemsContainer = document.getElementById('portion-menu-items')!;
+    const detectedLower = (totals ? [] : []).concat(
+      menu.menuItems.map((n: string) => n.toLowerCase())
+    );
+    itemsContainer.innerHTML = menu.menuItems.map((item: string) =>
+      `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 text-violet-700 border border-violet-100">
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75"/></svg>
+        ${item}
+      </span>`
+    ).join('');
+
+    // Nutrient comparison rows builder
+    function buildNutrientRows(portion: any, estimatedTotals: any): string {
+      const nutrients = [
+        { label: 'Kalori', key: 'calories', unit: 'kkal', color: 'amber' },
+        { label: 'Protein', key: 'protein', unit: 'g', color: 'blue' },
+        { label: 'Karbohidrat', key: 'carbohydrates', unit: 'g', color: 'purple' },
+        { label: 'Lemak', key: 'fat', unit: 'g', color: 'rose' },
+        { label: 'Serat', key: 'fiber', unit: 'g', color: 'teal' },
+      ];
+
+      return nutrients.map(n => {
+        const ref = portion[n.key] ?? 0;
+        const est = estimatedTotals?.[n.key] ?? 0;
+        const ratio = ref > 0 ? (est / ref) * 100 : 0;
+        const pct = Math.min(ratio, 100);
+        const barColor = ratio > 120 ? 'bg-rose-400' : ratio >= 80 ? 'bg-emerald-400' : 'bg-amber-400';
+
+        return `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-medium text-surface-500 w-20 shrink-0">${n.label}</span>
+            <div class="flex-1 h-1.5 bg-surface-100 rounded-full overflow-hidden">
+              <div class="${barColor} h-full rounded-full transition-all duration-500" style="width: ${Math.min(pct, 100).toFixed(0)}%"></div>
+            </div>
+            <span class="text-xs font-bold text-surface-700 w-16 text-right">${ref} ${n.unit}</span>
+          </div>`;
+      }).join('');
+    }
+
+    // Populate both portion cards
+    document.getElementById('porsi-besar-nutrients')!.innerHTML =
+      buildNutrientRows(menu.porsi_besar, totals);
+    document.getElementById('porsi-kecil-nutrients')!.innerHTML =
+      buildNutrientRows(menu.porsi_kecil, totals);
+
+    // Highlight closest portion
+    const besarCard = document.getElementById('porsi-besar-card')!;
+    const kecilCard = document.getElementById('porsi-kecil-card')!;
+    const besarBadge = document.getElementById('porsi-besar-badge')!;
+    const kecilBadge = document.getElementById('porsi-kecil-badge')!;
+
+    if (menu.closestPortion === 'porsi_besar') {
+      besarCard.className = 'rounded-xl border-2 border-orange-300 bg-orange-50/30 p-4 transition-all duration-200';
+      kecilCard.className = 'rounded-xl border-2 border-surface-200 p-4 transition-all duration-200';
+      besarBadge.classList.remove('hidden');
+      kecilBadge.classList.add('hidden');
+    } else {
+      kecilCard.className = 'rounded-xl border-2 border-sky-300 bg-sky-50/30 p-4 transition-all duration-200';
+      besarCard.className = 'rounded-xl border-2 border-surface-200 p-4 transition-all duration-200';
+      kecilBadge.classList.remove('hidden');
+      besarBadge.classList.add('hidden');
+    }
+
+    // Deviation indicator
+    const devIcon = document.getElementById('deviation-icon')!;
+    const devText = document.getElementById('deviation-text')!;
+    const devDetail = document.getElementById('deviation-detail')!;
+    const absDeviation = Math.abs(menu.calorieDeviation);
+
+    if (absDeviation <= 10) {
+      devIcon.className = 'w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-brand-50';
+      devIcon.innerHTML = '<svg class="w-5 h-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+      devText.textContent = `Sesuai standar ${menu.portionLabel}`;
+      devDetail.textContent = `Deviasi kalori hanya ${absDeviation.toFixed(1)}% dari referensi ${menu.portionLabel}. Menu ini memenuhi standar gizi.`;
+    } else if (menu.calorieDeviation > 0) {
+      devIcon.className = 'w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50';
+      devIcon.innerHTML = '<svg class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"/></svg>';
+      devText.textContent = `Kalori ${absDeviation.toFixed(1)}% di atas ${menu.portionLabel}`;
+      devDetail.textContent = `Estimasi kalori terdeteksi lebih tinggi dari standar referensi ${menu.portionLabel}. Porsi makanan mungkin lebih besar dari standar.`;
+    } else {
+      devIcon.className = 'w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-sky-50';
+      devIcon.innerHTML = '<svg class="w-5 h-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"/></svg>';
+      devText.textContent = `Kalori ${absDeviation.toFixed(1)}% di bawah ${menu.portionLabel}`;
+      devDetail.textContent = `Estimasi kalori terdeteksi lebih rendah dari standar referensi ${menu.portionLabel}. Porsi makanan mungkin lebih kecil dari standar.`;
+    }
+  }
 </script>

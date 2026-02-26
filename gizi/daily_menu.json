@@ -1,0 +1,52 @@
+{
+  "Menu 1": {
+    "daftar_menu": ["Apel", "Tempe Goreng", "Ayam Goreng", "Gudeg", "Nasi"],
+    "porsi_besar": {"energi": 625, "lemak": 26, "protein": 18, "karbohidrat": 81, "serat": 5},
+    "porsi_kecil": {"energi": 520, "lemak": 25, "protein": 17, "karbohidrat": 65, "serat": 5.2}
+  },
+  "Menu 2": { 
+    "daftar_menu": ["Telur Semur", "Sayur Isi Pepaya", "Pisang", "Tahu", "Lontong"],
+    "porsi_besar": {"energi": 570, "lemak": 19, "protein": 20, "karbohidrat": 85, "serat": 3},
+    "porsi_kecil": {"energi": 480, "lemak": 18, "protein": 19, "karbohidrat": 65, "serat": 2.9}
+  },
+  "Menu 3": {
+    "daftar_menu": ["Mie", "Sawi", "Semur Ayam Kecap", "Tempe Sagu", "Pisang"],
+    "porsi_besar": {"energi": 645, "lemak": 25, "protein": 15, "karbohidrat": 95, "serat": 0},
+    "porsi_kecil": {"energi": 525, "lemak": 22, "protein": 13, "karbohidrat": 75, "serat": 0}
+  },
+  "Menu 4": {
+    "daftar_menu": ["Apel", "Kacang Merah", "Telur", "Fla Susu", "Jagung"],
+    "porsi_besar": {"energi": 560, "lemak": 19, "protein": 21, "karbohidrat": 90, "serat": 0},
+    "porsi_kecil": {"energi": 425, "lemak": 19, "protein": 19, "karbohidrat": 70, "serat": 0}
+  },
+  "Menu 5": {
+    "daftar_menu": ["Tahu", "Tumis Koll Wortel", "Telur Semur", "Kelengkeng", "Nasi"],
+    "porsi_besar": {"energi": 630, "lemak": 19, "protein": 20, "karbohidrat": 95, "serat": 2.3},
+    "porsi_kecil": {"energi": 522, "lemak": 18, "protein": 19, "karbohidrat": 75, "serat": 2.2}
+  },
+  "Menu 6": {
+    "daftar_menu": ["Salad Buah", "Tempe Goreng", "Rolade Asam Manis", "Capcay", "Nasi"],
+    "porsi_besar": {"energi": 673, "lemak": 22, "protein": 20, "karbohidrat": 101, "serat": 32},
+    "porsi_kecil": {"energi": 583, "lemak": 21, "protein": 19, "karbohidrat": 81, "serat": 3.1}
+  },
+  "Menu 7": {
+    "daftar_menu": ["Nasi", "Anggur", "Tumis Keciwis", "Tahu", "Lele Crispy"],
+    "porsi_besar": {"energi": 556, "lemak": 15, "protein": 18, "karbohidrat": 85, "serat": 0},
+    "porsi_kecil": {"energi": 445, "lemak": 15, "protein": 17, "karbohidrat": 64, "serat": 0}
+  },
+  "Menu 8": {
+    "daftar_menu": ["Ketimun dan Selada", "Anggur", "Chiken Katsu", "Keju", "Roti"],
+    "porsi_besar": {"energi": 554, "lemak": 26, "protein": 19, "karbohidrat": 60, "serat": 0},
+    "porsi_kecil": {"energi": 254, "lemak": 26, "protein": 16, "karbohidrat": 40, "serat": 0}
+  },
+  "Menu 9": {
+    "daftar_menu": ["Nasi Daun Jeruk", "Ketimun dan Selada", "Ayam Serundeng", "Pepes Tahu", "Pisang Lampung"],
+    "porsi_besar": {"energi": 587, "lemak": 24, "protein": 18, "karbohidrat": 78, "serat": 0},
+    "porsi_kecil": {"energi": 474, "lemak": 22, "protein": 15, "karbohidrat": 60, "serat": 0}
+  },
+  "Menu 10": {
+    "daftar_menu": ["Jeruk", "Tahu Crispy", "Bakso Saus BBQ", "Acar Timun Wortel", "Kwetiaw"],
+    "porsi_besar": {"energi": 595, "lemak": 30, "protein": 20, "karbohidrat": 65, "serat": 0},
+    "porsi_kecil": {"energi": 495, "lemak": 25, "protein": 17, "karbohidrat": 55, "serat": 0}
+  }
+}

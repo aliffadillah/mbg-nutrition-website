@@ -1,7 +1,7 @@
 ---
 import DashboardLayout from '../../layouts/DashboardLayout.astro';
 import { db } from '../../db/db';
-import { foodNutrition } from '../../db/schema';
+import { foodNutrition, dailyMenus } from '../../db/schema';
 import { asc, ilike, sql } from 'drizzle-orm';
 
 const url = new URL(Astro.request.url);
@@ -26,6 +26,45 @@ try {
 }
 
 const totalPages = Math.ceil(total / limit);
+
+// Fetch daily menus for reference section
+interface DailyMenuRow {
+  menuName: string;
+  portionSize: string;
+  menuItems: string;
+  calories: string;
+  protein: string;
+  carbohydrates: string;
+  fat: string;
+  fiber: string;
+}
+let dailyMenuRows: DailyMenuRow[] = [];
+try {
+  dailyMenuRows = (await db.select({
+    menuName: dailyMenus.menuName,
+    portionSize: dailyMenus.portionSize,
+    menuItems: dailyMenus.menuItems,
+    calories: dailyMenus.calories,
+    protein: dailyMenus.protein,
+    carbohydrates: dailyMenus.carbohydrates,
+    fat: dailyMenus.fat,
+    fiber: dailyMenus.fiber,
+  }).from(dailyMenus).orderBy(asc(dailyMenus.menuName))) as DailyMenuRow[];
+} catch (e) {
+  console.error('Daily menu fetch error:', e);
+}
+
+// Group daily menus by name
+const groupedMenus = new Map<string, { items: string[]; porsi_besar?: DailyMenuRow; porsi_kecil?: DailyMenuRow }>();
+for (const row of dailyMenuRows) {
+  if (!groupedMenus.has(row.menuName)) {
+    groupedMenus.set(row.menuName, { items: JSON.parse(row.menuItems || '[]') });
+  }
+  const entry = groupedMenus.get(row.menuName)!;
+  if (row.portionSize === 'porsi_besar') entry.porsi_besar = row;
+  if (row.portionSize === 'porsi_kecil') entry.porsi_kecil = row;
+}
+const menuEntries = Array.from(groupedMenus.entries());
 ---
 
 <DashboardLayout title="Data Master Nutrisi" activeNav="nutrition">
@@ -37,7 +76,7 @@ const totalPages = Math.ceil(total / limit);
       </div>
       <div>
         <h2 class="text-xl font-bold text-brand-900">Data Master Nutrisi</h2>
-        <p class="text-sm text-brand-600/60">Kelola data gizi per 100 gram setiap item menu</p>
+        <p class="text-sm text-emerald-700">Kelola data gizi per 100 gram setiap item menu</p>
       </div>
     </div>
     <button id="add-btn" class="bg-brand-600 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-700 transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md">
@@ -47,7 +86,7 @@ const totalPages = Math.ceil(total / limit);
   </div>
 
   <!-- Search -->
-  <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft p-4 mb-6">
+  <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft p-4 mb-6">
     <form method="GET" class="flex gap-3">
       <div class="relative flex-1">
         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -58,14 +97,14 @@ const totalPages = Math.ceil(total / limit);
           name="search"
           value={search}
           placeholder="Cari nama makanan..."
-          class="w-full pl-10 pr-4 py-2.5 border border-brand-200/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400 text-brand-800 placeholder:text-brand-300/50 transition-all duration-200"
+          class="w-full pl-10 pr-4 py-2.5 border border-emerald-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 text-slate-800 placeholder:text-slate-400 transition-all duration-200"
         />
       </div>
       <button type="submit" class="bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-700 transition-all duration-200 shadow-sm">
         Cari
       </button>
       {search && (
-        <a href="/dashboard/nutrition" class="bg-cream-100 text-brand-700 px-4 py-2.5 rounded-xl text-sm hover:bg-cream-200 transition border border-brand-200/50">Reset</a>
+        <a href="/dashboard/nutrition" class="bg-slate-100 text-emerald-800 px-4 py-2.5 rounded-xl text-sm hover:bg-slate-200 transition border border-slate-200">Reset</a>
       )}
     </form>
     <div class="mt-2">
@@ -74,19 +113,19 @@ const totalPages = Math.ceil(total / limit);
   </div>
 
   <!-- Table -->
-  <div class="bg-white rounded-2xl border border-brand-100/50 shadow-soft overflow-hidden">
+  <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft overflow-hidden">
     <div class="overflow-x-auto">
       <table class="min-w-full text-sm">
-        <thead class="bg-brand-50/60 border-b border-brand-100/50">
+        <thead class="bg-emerald-50 border-b border-emerald-200">
           <tr>
-            <th class="px-5 py-3.5 text-left text-xs font-medium text-brand-600/60 uppercase tracking-wider">Nama Makanan</th>
-            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Kalori</th>
-            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Protein</th>
-            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Karbo</th>
-            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Lemak</th>
-            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Serat</th>
-            <th class="px-5 py-3.5 text-right text-xs font-medium text-brand-600/60 uppercase tracking-wider">Ref. Berat</th>
-            <th class="px-5 py-3.5 text-center text-xs font-medium text-brand-600/60 uppercase tracking-wider">Aksi</th>
+            <th class="px-5 py-3.5 text-left text-xs font-medium text-emerald-700 uppercase tracking-wider">Nama Makanan</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Kalori</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Protein</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Karbo</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Lemak</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Serat</th>
+            <th class="px-5 py-3.5 text-right text-xs font-medium text-emerald-700 uppercase tracking-wider">Ref. Berat</th>
+            <th class="px-5 py-3.5 text-center text-xs font-medium text-emerald-700 uppercase tracking-wider">Aksi</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-surface-100" id="nutrition-tbody">
@@ -110,7 +149,7 @@ const totalPages = Math.ceil(total / limit);
             </tr>
           ) : (
             rows.map(row => (
-              <tr class="hover:bg-surface-50/70 transition-colors duration-150 group nutrition-row" data-id={row.id}>
+              <tr class="hover:bg-slate-50 transition-colors duration-150 group nutrition-row" data-id={row.id}>
                 <td class="px-5 py-3.5 font-semibold text-surface-900">{row.foodName}</td>
                 <td class="px-5 py-3.5 text-right font-semibold text-amber-600">{parseFloat(String(row.calories)).toFixed(1)}</td>
                 <td class="px-5 py-3.5 text-right text-blue-600 font-medium">{parseFloat(String(row.protein)).toFixed(1)}g</td>
@@ -160,6 +199,137 @@ const totalPages = Math.ceil(total / limit);
       </div>
     )}
   </div>
+
+  <!-- Daily Menu Reference Section -->
+  {menuEntries.length > 0 && (
+    <div class="mt-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center">
+          <svg class="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z"/></svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-brand-900">Referensi Menu Harian MBG</h2>
+          <p class="text-sm text-emerald-700">Standar nutrisi per menu dengan dua ukuran porsi</p>
+        </div>
+      </div>
+
+      <!-- Portion size legend -->
+      <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft p-5 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-orange-50/50 border border-orange-100">
+            <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5"/></svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-surface-800 text-sm">Porsi Besar</h4>
+              <p class="text-xs text-surface-500 mt-0.5">Ditujukan untuk siswa <span class="font-semibold text-surface-700">SMP, SMA</span>, dan <span class="font-semibold text-surface-700">Dewasa</span>. Kalori lebih tinggi untuk memenuhi kebutuhan energi remaja dan orang dewasa yang lebih aktif.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-sky-50/50 border border-sky-100">
+            <div class="w-9 h-9 rounded-lg bg-sky-100 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-5 h-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 5.25l-7.5 7.5-7.5-7.5m15 6l-7.5 7.5-7.5-7.5"/></svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-surface-800 text-sm">Porsi Kecil</h4>
+              <p class="text-xs text-surface-500 mt-0.5">Ditujukan untuk siswa <span class="font-semibold text-surface-700">TK</span> dan <span class="font-semibold text-surface-700">SD</span>. Porsi disesuaikan dengan kebutuhan kalori anak-anak yang lebih rendah.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily menu cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {menuEntries.map(([menuName, menu]) => (
+          <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-emerald-100 bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-between">
+              <h3 class="font-bold text-white text-sm">{menuName}</h3>
+              <span class="text-xs bg-white/20 text-white px-2.5 py-0.5 rounded-full font-medium">{menu.items.length} item</span>
+            </div>
+            <div class="p-5">
+              <!-- Food items -->
+              <div class="flex flex-wrap gap-1.5 mb-4">
+                {menu.items.map((item: string) => (
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-700 border border-violet-100">
+                    {item}
+                  </span>
+                ))}
+              </div>
+
+              <!-- Comparison table -->
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs">
+                  <thead>
+                    <tr class="border-b border-surface-100">
+                      <th class="py-2 text-left text-surface-400 font-medium">Porsi</th>
+                      <th class="py-2 text-right text-amber-600 font-medium">Kalori</th>
+                      <th class="py-2 text-right text-blue-600 font-medium">Protein</th>
+                      <th class="py-2 text-right text-purple-600 font-medium">Karbo</th>
+                      <th class="py-2 text-right text-rose-600 font-medium">Lemak</th>
+                      <th class="py-2 text-right text-teal-600 font-medium">Serat</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-surface-50">
+                    {menu.porsi_besar && (
+                      <tr>
+                        <td class="py-2.5">
+                          <span class="inline-flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+                            <span class="font-semibold text-surface-700">Besar</span>
+                          </span>
+                        </td>
+                        <td class="py-2.5 text-right font-bold text-amber-700">{parseFloat(menu.porsi_besar.calories).toFixed(0)} kkal</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.protein).toFixed(0)}g</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.carbohydrates).toFixed(0)}g</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.fat).toFixed(0)}g</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.fiber).toFixed(1)}g</td>
+                      </tr>
+                    )}
+                    {menu.porsi_kecil && (
+                      <tr>
+                        <td class="py-2.5">
+                          <span class="inline-flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                            <span class="font-semibold text-surface-700">Kecil</span>
+                          </span>
+                        </td>
+                        <td class="py-2.5 text-right font-bold text-amber-700">{parseFloat(menu.porsi_kecil.calories).toFixed(0)} kkal</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.protein).toFixed(0)}g</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.carbohydrates).toFixed(0)}g</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.fat).toFixed(0)}g</td>
+                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.fiber).toFixed(1)}g</td>
+                      </tr>
+                    )}
+                    {menu.porsi_besar && menu.porsi_kecil && (
+                      <tr class="bg-surface-50/50">
+                        <td class="py-2.5">
+                          <span class="text-surface-400 font-medium">Selisih</span>
+                        </td>
+                        <td class="py-2.5 text-right font-semibold text-surface-400">
+                          {(parseFloat(menu.porsi_besar.calories) - parseFloat(menu.porsi_kecil.calories)).toFixed(0)} kkal
+                        </td>
+                        <td class="py-2.5 text-right text-surface-400">
+                          {(parseFloat(menu.porsi_besar.protein) - parseFloat(menu.porsi_kecil.protein)).toFixed(0)}g
+                        </td>
+                        <td class="py-2.5 text-right text-surface-400">
+                          {(parseFloat(menu.porsi_besar.carbohydrates) - parseFloat(menu.porsi_kecil.carbohydrates)).toFixed(0)}g
+                        </td>
+                        <td class="py-2.5 text-right text-surface-400">
+                          {(parseFloat(menu.porsi_besar.fat) - parseFloat(menu.porsi_kecil.fat)).toFixed(0)}g
+                        </td>
+                        <td class="py-2.5 text-right text-surface-400">
+                          {(parseFloat(menu.porsi_besar.fiber) - parseFloat(menu.porsi_kecil.fiber)).toFixed(1)}g
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
 </DashboardLayout>
 
 <!-- Modal -->

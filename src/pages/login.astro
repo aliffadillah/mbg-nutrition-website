@@ -40,21 +40,21 @@ const errorParam = Astro.url.searchParams.get('error');
           </svg>
         </div>
         <h2 class="text-3xl font-extrabold text-white mb-4 tracking-tight">MBG Monitor</h2>
-        <p class="text-brand-200/70 leading-relaxed">
+        <p class="text-brand-200 leading-relaxed">
           Sistem monitoring Program Makan Bergizi Gratis berbasis AI untuk estimasi nilai gizi makanan secara otomatis.
         </p>
         <div class="mt-10 grid grid-cols-3 gap-4">
           <div class="bg-white/10 rounded-xl p-4 border border-white/10 backdrop-blur-sm">
             <p class="text-xl font-bold text-white">AI</p>
-            <p class="text-xs text-brand-300/60 mt-1">RT-DETR</p>
+            <p class="text-xs text-brand-200 mt-1">RT-DETR</p>
           </div>
-          <div class="bg-white/10 rounded-xl p-4 border border-white/10 backdrop-blur-sm">
+          <div class="bg-white/10 rounded-xl p-4 border border-white/20 backdrop-blur-sm">
             <p class="text-xl font-bold text-white">92%</p>
-            <p class="text-xs text-brand-300/60 mt-1">mAP@50</p>
+            <p class="text-xs text-brand-200 mt-1">mAP@50</p>
           </div>
-          <div class="bg-white/10 rounded-xl p-4 border border-white/10 backdrop-blur-sm">
+          <div class="bg-white/10 rounded-xl p-4 border border-white/20 backdrop-blur-sm">
             <p class="text-xl font-bold text-white">4+</p>
-            <p class="text-xs text-brand-300/60 mt-1">Nutrisi</p>
+            <p class="text-xs text-brand-200 mt-1">Nutrisi</p>
           </div>
         </div>
       </div>
@@ -76,7 +76,7 @@ const errorParam = Astro.url.searchParams.get('error');
         <!-- Desktop heading -->
         <div class="hidden lg:block mb-10">
           <h1 class="text-2xl font-extrabold text-brand-900 tracking-tight">Selamat Datang</h1>
-          <p class="text-brand-600/60 text-sm mt-2">Masuk ke dashboard untuk mengelola data.</p>
+          <p class="text-brand-500 text-sm mt-2">Masuk ke dashboard untuk mengelola data.</p>
         </div>
 
         {errorParam === 'invalid' && (
@@ -111,7 +111,7 @@ const errorParam = Astro.url.searchParams.get('error');
               required
               autocomplete="username"
               placeholder="Masukkan username"
-              class="w-full px-4 py-3 bg-white border border-brand-200/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-brand-900 text-sm transition-all placeholder:text-brand-300/50"
+              class="w-full px-4 py-3 bg-white border border-brand-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-brand-900 text-sm transition-all placeholder:text-brand-400"
             />
           </div>
 
@@ -127,12 +127,12 @@ const errorParam = Astro.url.searchParams.get('error');
                 required
                 autocomplete="current-password"
                 placeholder="Masukkan password"
-                class="w-full px-4 py-3 bg-white border border-brand-200/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-brand-900 text-sm transition-all placeholder:text-brand-300/50 pr-12"
+                class="w-full px-4 py-3 bg-white border border-brand-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-brand-900 text-sm transition-all placeholder:text-brand-400 pr-12"
               />
               <button
                 type="button"
                 id="toggle-password"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-brand-300 hover:text-brand-500 transition p-1"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-brand-400 hover:text-brand-600 transition p-1"
               >
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -157,7 +157,7 @@ const errorParam = Astro.url.searchParams.get('error');
         </form>
 
         <div class="mt-8 text-center">
-          <a href="/" class="text-sm text-brand-400 hover:text-brand-600 transition-colors font-medium flex items-center justify-center gap-1.5">
+          <a href="/" class="text-sm text-brand-500 hover:text-brand-700 transition-colors font-medium flex items-center justify-center gap-1.5">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
@@ -165,7 +165,7 @@ const errorParam = Astro.url.searchParams.get('error');
           </a>
         </div>
 
-        <p class="text-center text-xs text-brand-300/50 mt-10">
+        <p class="text-center text-xs text-brand-400 mt-10">
           MBG Monitoring System &copy; 2026
         </p>
       </div>

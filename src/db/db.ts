@@ -13,6 +13,8 @@ if (!connectionString) {
 // Session Pooler / Direct: bisa max lebih tinggi
 const queryClient = postgres(connectionString, {
   max: 1,
+  idle_timeout: 20,         // tutup koneksi idle setelah 20 detik
+  connect_timeout: 10,      // gagalkan jika koneksi tidak terbentuk dalam 10 detik
   ssl: connectionString.includes('supabase.com') ? 'require' : false,
   prepare: false, // wajib untuk Supabase Transaction Pooler
 });

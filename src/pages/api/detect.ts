@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { detectFood, detectFoodPreview } from '../../lib/api';
-import { mapDetectionsToNutrition, sumNutrition } from '../../lib/nutrition';
+import { mapDetectionsToNutrition, sumNutrition, matchDailyMenu } from '../../lib/nutrition';
 import { getSessionFromRequest } from '../../lib/auth';
 import { db } from '../../db/db';
 import { detections, detectionItems } from '../../db/schema';
@@ -120,6 +120,10 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Match against daily menus for portion reference
+    const detectedFoodNames = nutritionItems.map(item => item.foodName);
+    const matchedMenu = await matchDailyMenu(detectedFoodNames, totals.calories);
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -142,6 +146,7 @@ export const POST: APIRoute = async ({ request }) => {
           fiber: item.fiber,
         })),
         nutrition_totals: totals,
+        matched_daily_menu: matchedMenu,
       }),
       {
         headers: { 'Content-Type': 'application/json' },
