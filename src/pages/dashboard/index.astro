@@ -104,11 +104,11 @@ const summaryCards = [
             const maxCal = Math.max(...dailyChart.map(x => parseFloat(x.calories) || 0));
             const heightPct = maxCal > 0 ? Math.max(8, (parseFloat(d.calories) / maxCal) * 100) : 8;
             return (
-              <div class="flex-1 flex flex-col items-center gap-1.5">
+              <div class="flex-1 h-full flex flex-col items-center justify-end gap-1.5">
                 <span class="text-[11px] text-surface-500 font-semibold">{d.calories}</span>
                 <div
                   class="w-full bg-gradient-to-t from-brand-500 to-brand-400 rounded-lg hover:from-brand-600 hover:to-brand-500 transition-all cursor-pointer"
-                  style={`height: ${heightPct}%`}
+                  style={`height: ${heightPct}%; min-height: 8px`}
                   title={`${d.date}: ${d.calories} kkal`}
                 ></div>
                 <span class="text-[11px] text-surface-400">{d.date}</span>

@@ -93,6 +93,7 @@ export const dailyMenus = pgTable('daily_menus', {
   menuName: varchar('menu_name', { length: 50 }).notNull(),             // e.g. "Menu 1"
   menuItems: text('menu_items').notNull().default('[]'),                // JSON array of food names
   portionSize: varchar('portion_size', { length: 20 }).notNull(),       // "porsi_besar" | "porsi_kecil"
+  imageUrl: text('image_url'),                                          // URL foto menu dari Supabase storage
   calories: numeric('calories', { precision: 8, scale: 2 }).notNull().default('0'),
   protein: numeric('protein', { precision: 8, scale: 2 }).notNull().default('0'),
   carbohydrates: numeric('carbohydrates', { precision: 8, scale: 2 }).notNull().default('0'),

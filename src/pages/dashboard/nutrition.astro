@@ -1,7 +1,7 @@
 ---
 import DashboardLayout from '../../layouts/DashboardLayout.astro';
 import { db } from '../../db/db';
-import { foodNutrition, dailyMenus } from '../../db/schema';
+import { foodNutrition } from '../../db/schema';
 import { asc, ilike, sql } from 'drizzle-orm';
 
 const url = new URL(Astro.request.url);
@@ -27,44 +27,6 @@ try {
 
 const totalPages = Math.ceil(total / limit);
 
-// Fetch daily menus for reference section
-interface DailyMenuRow {
-  menuName: string;
-  portionSize: string;
-  menuItems: string;
-  calories: string;
-  protein: string;
-  carbohydrates: string;
-  fat: string;
-  fiber: string;
-}
-let dailyMenuRows: DailyMenuRow[] = [];
-try {
-  dailyMenuRows = (await db.select({
-    menuName: dailyMenus.menuName,
-    portionSize: dailyMenus.portionSize,
-    menuItems: dailyMenus.menuItems,
-    calories: dailyMenus.calories,
-    protein: dailyMenus.protein,
-    carbohydrates: dailyMenus.carbohydrates,
-    fat: dailyMenus.fat,
-    fiber: dailyMenus.fiber,
-  }).from(dailyMenus).orderBy(asc(dailyMenus.menuName))) as DailyMenuRow[];
-} catch (e) {
-  console.error('Daily menu fetch error:', e);
-}
-
-// Group daily menus by name
-const groupedMenus = new Map<string, { items: string[]; porsi_besar?: DailyMenuRow; porsi_kecil?: DailyMenuRow }>();
-for (const row of dailyMenuRows) {
-  if (!groupedMenus.has(row.menuName)) {
-    groupedMenus.set(row.menuName, { items: JSON.parse(row.menuItems || '[]') });
-  }
-  const entry = groupedMenus.get(row.menuName)!;
-  if (row.portionSize === 'porsi_besar') entry.porsi_besar = row;
-  if (row.portionSize === 'porsi_kecil') entry.porsi_kecil = row;
-}
-const menuEntries = Array.from(groupedMenus.entries());
 ---
 
 <DashboardLayout title="Data Master Nutrisi" activeNav="nutrition">
@@ -158,8 +120,8 @@ const menuEntries = Array.from(groupedMenus.entries());
                 <td class="px-5 py-3.5 text-right text-teal-600 font-medium">{parseFloat(String(row.fiber)).toFixed(1)}g</td>
                 <td class="px-5 py-3.5 text-right text-surface-400">{parseFloat(String(row.referenceWeightGram)).toFixed(0)}g</td>
                 <td class="px-5 py-3.5 text-center">
-                  <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                    <button class="edit-btn w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center text-surface-300 hover:text-blue-600 transition-all duration-200"
+                  <div class="flex items-center justify-center gap-2">
+                    <button class="edit-btn w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition-all duration-200"
                       data-id={row.id}
                       data-name={row.foodName}
                       data-calories={row.calories}
@@ -174,7 +136,7 @@ const menuEntries = Array.from(groupedMenus.entries());
                     >
                       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
                     </button>
-                    <button class="delete-btn w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-surface-300 hover:text-red-500 transition-all duration-200"
+                    <button class="delete-btn w-8 h-8 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center text-red-500 hover:bg-red-100 transition-all duration-200"
                       data-id={row.id}
                       title="Hapus"
                     >
@@ -200,136 +162,6 @@ const menuEntries = Array.from(groupedMenus.entries());
     )}
   </div>
 
-  <!-- Daily Menu Reference Section -->
-  {menuEntries.length > 0 && (
-    <div class="mt-8">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center">
-          <svg class="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z"/></svg>
-        </div>
-        <div>
-          <h2 class="text-xl font-bold text-brand-900">Referensi Menu Harian MBG</h2>
-          <p class="text-sm text-emerald-700">Standar nutrisi per menu dengan dua ukuran porsi</p>
-        </div>
-      </div>
-
-      <!-- Portion size legend -->
-      <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft p-5 mb-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="flex items-start gap-3 p-3 rounded-xl bg-orange-50/50 border border-orange-100">
-            <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
-              <svg class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5"/></svg>
-            </div>
-            <div>
-              <h4 class="font-bold text-surface-800 text-sm">Porsi Besar</h4>
-              <p class="text-xs text-surface-500 mt-0.5">Ditujukan untuk siswa <span class="font-semibold text-surface-700">SMP, SMA</span>, dan <span class="font-semibold text-surface-700">Dewasa</span>. Kalori lebih tinggi untuk memenuhi kebutuhan energi remaja dan orang dewasa yang lebih aktif.</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 p-3 rounded-xl bg-sky-50/50 border border-sky-100">
-            <div class="w-9 h-9 rounded-lg bg-sky-100 flex items-center justify-center shrink-0 mt-0.5">
-              <svg class="w-5 h-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 5.25l-7.5 7.5-7.5-7.5m15 6l-7.5 7.5-7.5-7.5"/></svg>
-            </div>
-            <div>
-              <h4 class="font-bold text-surface-800 text-sm">Porsi Kecil</h4>
-              <p class="text-xs text-surface-500 mt-0.5">Ditujukan untuk siswa <span class="font-semibold text-surface-700">TK</span> dan <span class="font-semibold text-surface-700">SD</span>. Porsi disesuaikan dengan kebutuhan kalori anak-anak yang lebih rendah.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Daily menu cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {menuEntries.map(([menuName, menu]) => (
-          <div class="bg-white rounded-2xl border border-emerald-200 shadow-soft overflow-hidden">
-            <div class="px-5 py-3.5 border-b border-emerald-100 bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-between">
-              <h3 class="font-bold text-white text-sm">{menuName}</h3>
-              <span class="text-xs bg-white/20 text-white px-2.5 py-0.5 rounded-full font-medium">{menu.items.length} item</span>
-            </div>
-            <div class="p-5">
-              <!-- Food items -->
-              <div class="flex flex-wrap gap-1.5 mb-4">
-                {menu.items.map((item: string) => (
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-700 border border-violet-100">
-                    {item}
-                  </span>
-                ))}
-              </div>
-
-              <!-- Comparison table -->
-              <div class="overflow-x-auto">
-                <table class="w-full text-xs">
-                  <thead>
-                    <tr class="border-b border-surface-100">
-                      <th class="py-2 text-left text-surface-400 font-medium">Porsi</th>
-                      <th class="py-2 text-right text-amber-600 font-medium">Kalori</th>
-                      <th class="py-2 text-right text-blue-600 font-medium">Protein</th>
-                      <th class="py-2 text-right text-purple-600 font-medium">Karbo</th>
-                      <th class="py-2 text-right text-rose-600 font-medium">Lemak</th>
-                      <th class="py-2 text-right text-teal-600 font-medium">Serat</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-surface-50">
-                    {menu.porsi_besar && (
-                      <tr>
-                        <td class="py-2.5">
-                          <span class="inline-flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-orange-400"></span>
-                            <span class="font-semibold text-surface-700">Besar</span>
-                          </span>
-                        </td>
-                        <td class="py-2.5 text-right font-bold text-amber-700">{parseFloat(menu.porsi_besar.calories).toFixed(0)} kkal</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.protein).toFixed(0)}g</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.carbohydrates).toFixed(0)}g</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.fat).toFixed(0)}g</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_besar.fiber).toFixed(1)}g</td>
-                      </tr>
-                    )}
-                    {menu.porsi_kecil && (
-                      <tr>
-                        <td class="py-2.5">
-                          <span class="inline-flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
-                            <span class="font-semibold text-surface-700">Kecil</span>
-                          </span>
-                        </td>
-                        <td class="py-2.5 text-right font-bold text-amber-700">{parseFloat(menu.porsi_kecil.calories).toFixed(0)} kkal</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.protein).toFixed(0)}g</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.carbohydrates).toFixed(0)}g</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.fat).toFixed(0)}g</td>
-                        <td class="py-2.5 text-right text-surface-600">{parseFloat(menu.porsi_kecil.fiber).toFixed(1)}g</td>
-                      </tr>
-                    )}
-                    {menu.porsi_besar && menu.porsi_kecil && (
-                      <tr class="bg-surface-50/50">
-                        <td class="py-2.5">
-                          <span class="text-surface-400 font-medium">Selisih</span>
-                        </td>
-                        <td class="py-2.5 text-right font-semibold text-surface-400">
-                          {(parseFloat(menu.porsi_besar.calories) - parseFloat(menu.porsi_kecil.calories)).toFixed(0)} kkal
-                        </td>
-                        <td class="py-2.5 text-right text-surface-400">
-                          {(parseFloat(menu.porsi_besar.protein) - parseFloat(menu.porsi_kecil.protein)).toFixed(0)}g
-                        </td>
-                        <td class="py-2.5 text-right text-surface-400">
-                          {(parseFloat(menu.porsi_besar.carbohydrates) - parseFloat(menu.porsi_kecil.carbohydrates)).toFixed(0)}g
-                        </td>
-                        <td class="py-2.5 text-right text-surface-400">
-                          {(parseFloat(menu.porsi_besar.fat) - parseFloat(menu.porsi_kecil.fat)).toFixed(0)}g
-                        </td>
-                        <td class="py-2.5 text-right text-surface-400">
-                          {(parseFloat(menu.porsi_besar.fiber) - parseFloat(menu.porsi_kecil.fiber)).toFixed(1)}g
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
 </DashboardLayout>
 
 <!-- Modal -->
