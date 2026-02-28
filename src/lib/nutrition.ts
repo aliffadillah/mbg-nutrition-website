@@ -78,6 +78,8 @@ export async function findNutritionByFoodName(
 
 /**
  * Map RT-DETR detection results to nutrition calculations.
+ * Nutrition values are taken directly from the database using referenceWeightGram
+ * as the standard portion weight (per 100g values scaled to referenceWeightGram).
  */
 export async function mapDetectionsToNutrition(
   detections: DetectionResult[]
@@ -86,21 +88,22 @@ export async function mapDetectionsToNutrition(
 
   for (const det of detections) {
     const nutritionRecord = await findNutritionByFoodName(det.class);
-    const estimatedWeight = estimateWeightFromBbox(det.bbox);
 
     if (nutritionRecord) {
       const n = nutritionRecord;
+      // Use the database's reference portion weight instead of bbox estimation
+      const referenceWeight = parseFloat(String(n.referenceWeightGram)) || 100;
       results.push({
         foodName: det.class,
         matchedFoodName: n.foodName,
         foodNutritionId: n.id,
-        estimatedWeightGram: Math.round(estimatedWeight),
+        estimatedWeightGram: Math.round(referenceWeight),
         confidence: det.confidence,
-        calories: calcNutrition(parseFloat(String(n.calories)), estimatedWeight),
-        protein: calcNutrition(parseFloat(String(n.protein)), estimatedWeight),
-        carbohydrates: calcNutrition(parseFloat(String(n.carbohydrates)), estimatedWeight),
-        fat: calcNutrition(parseFloat(String(n.fat)), estimatedWeight),
-        fiber: calcNutrition(parseFloat(String(n.fiber)), estimatedWeight),
+        calories: calcNutrition(parseFloat(String(n.calories)), referenceWeight),
+        protein: calcNutrition(parseFloat(String(n.protein)), referenceWeight),
+        carbohydrates: calcNutrition(parseFloat(String(n.carbohydrates)), referenceWeight),
+        fat: calcNutrition(parseFloat(String(n.fat)), referenceWeight),
+        fiber: calcNutrition(parseFloat(String(n.fiber)), referenceWeight),
         bbox: {
           x1: det.bbox.x1,
           y1: det.bbox.y1,
@@ -109,12 +112,13 @@ export async function mapDetectionsToNutrition(
         },
       });
     } else {
-      // No match — include with zeros
+      // No match — include with zeros, use bbox estimate for weight display only
+      const bboxWeight = estimateWeightFromBbox(det.bbox);
       results.push({
         foodName: det.class,
         matchedFoodName: null,
         foodNutritionId: null,
-        estimatedWeightGram: Math.round(estimatedWeight),
+        estimatedWeightGram: Math.round(bboxWeight),
         confidence: det.confidence,
         calories: 0,
         protein: 0,

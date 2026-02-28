@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { createClient } from '@supabase/supabase-js';
 
-// Gunakan Supabase HTTP client (bukan direct PostgreSQL) untuk menghindari ENOTFOUND
 function getEnv(key: string): string {
   return (typeof import.meta !== 'undefined' && (import.meta as any).env?.[key])
     ?? process.env[key]
@@ -24,9 +23,8 @@ export type User = {
 
 const SALT_ROUNDS = 12;
 const SESSION_COOKIE = 'mbg_session';
-const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; 
 
-// ─── Password helpers ─────────────────────────────────────────────────────────
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
 }
@@ -35,7 +33,6 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-// ─── Session token (simple base64 signed payload) ────────────────────────────
 function getSecret(): string {
   return process.env.AUTH_SECRET ?? 'change_me_fallback_secret_32chars!!';
 }
@@ -46,7 +43,7 @@ export function createSessionToken(userId: number, username: string): string {
     username,
     expires: Date.now() + SESSION_DURATION_MS,
   });
-  // Simple signing: base64(payload) + "." + base64(HMAC-like check using secret)
+
   const encoded = Buffer.from(payload).toString('base64');
   const signature = Buffer.from(
     `${encoded}.${getSecret()}`
@@ -65,7 +62,6 @@ export function parseSessionToken(token: string): { userId: number; username: st
   }
 }
 
-// ─── Cookie helpers ───────────────────────────────────────────────────────────
 export function buildSessionCookie(token: string): string {
   const maxAge = Math.floor(SESSION_DURATION_MS / 1000);
   return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
@@ -87,7 +83,6 @@ export function getSessionFromRequest(request: Request): { userId: number; usern
   return parseSessionToken(token);
 }
 
-// ─── DB helpers (menggunakan Supabase HTTP API, bukan direct PostgreSQL) ───────
 export async function findUserByUsername(username: string): Promise<User | null> {
   const supabase = getAdminSupabase();
   const { data, error } = await supabase

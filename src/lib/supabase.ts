@@ -2,23 +2,17 @@ import { createClient } from '@supabase/supabase-js';
 
 const BUCKET = 'detection_menu';
 
-// Baca env vars — coba import.meta.env (Vite/Astro dev) lalu process.env (node production)
 function getEnv(key: string): string {
   return (import.meta.env as Record<string, string | undefined>)[key]
     ?? process.env[key]
     ?? '';
 }
 
-// Public client — untuk akses data umum (anon)
 export const supabase = createClient(
   getEnv('SUPABASE_URL'),
   getEnv('SUPABASE_ANON_KEY')
 );
 
-/**
- * Buat admin client on-demand menggunakan service_role key.
- * Lazy init agar env vars sudah tersedia saat runtime.
- */
 function getAdminClient() {
   const url = getEnv('SUPABASE_URL');
   const serviceKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
@@ -37,10 +31,6 @@ function getAdminClient() {
   });
 }
 
-/**
- * Upload file (Blob) ke bucket detection_menu menggunakan service_role key (bypass RLS).
- * Returns public URL, atau null jika gagal.
- */
 export async function uploadToStorage(
   path: string,
   file: Blob,
@@ -65,9 +55,7 @@ export async function uploadToStorage(
   return publicData.publicUrl;
 }
 
-/**
- * Hapus file dari bucket detection_menu.
- */
+
 export async function deleteFromStorage(paths: string[]): Promise<void> {
   const admin = getAdminClient();
   const { error } = await admin.storage.from(BUCKET).remove(paths);

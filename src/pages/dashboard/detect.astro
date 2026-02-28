@@ -324,22 +324,87 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     if (f && f.type.startsWith('image/')) showFile(f);
   });
 
-  // Preview only
+  // Preview only (full nutrition data, no save)
   previewBtn.addEventListener('click', async () => {
     if (!selectedFile) return;
     hideAll();
     show(loading);
-    loadingMsg.textContent = 'Mengambil preview anotasi…';
+    loadingMsg.textContent = 'Mengambil preview anotasi dan data gizi…';
     try {
       const fd = new FormData();
       fd.append('image', selectedFile);
-      const res = await fetch('/api/detect?preview=true', { method: 'POST', body: fd });
+      const res = await fetch('/api/detect?nosave=true', { method: 'POST', body: fd });
       if (!res.ok) throw new Error(`Error ${res.status}`);
-      const blob = await res.blob();
-      annotatedImg.src = URL.createObjectURL(blob);
-      nutritionGrid.innerHTML = '';
-      itemsTbody.innerHTML = `<tr><td colspan="8" class="px-5 py-6 text-center text-surface-300 text-sm italic">Preview saja — tidak tersimpan</td></tr>`;
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error ?? 'Detection failed');
+
+      // Show annotated image from base64 data URL
+      if (data.annotated_image_data_url) {
+        annotatedImg.src = data.annotated_image_data_url;
+      }
+
+      // Nutrition totals
+      const n = data.nutrition_totals ?? {};
+      const nutritionCards = [
+        { label: 'Kalori', value: `${n.calories ?? 0}`, unit: 'kkal', color: 'bg-amber-50 text-amber-700 border-amber-100' },
+        { label: 'Protein', value: `${n.protein ?? 0}`, unit: 'g', color: 'bg-blue-50 text-blue-700 border-blue-100' },
+        { label: 'Karbohidrat', value: `${n.carbohydrates ?? 0}`, unit: 'g', color: 'bg-purple-50 text-purple-700 border-purple-100' },
+        { label: 'Lemak', value: `${n.fat ?? 0}`, unit: 'g', color: 'bg-rose-50 text-rose-700 border-rose-100' },
+        { label: 'Serat', value: `${n.fiber ?? 0}`, unit: 'g', color: 'bg-teal-50 text-teal-700 border-teal-100' },
+      ];
+      nutritionGrid.innerHTML = nutritionCards.map(c => `
+        <div class="border rounded-xl p-4 text-center ${c.color}">
+          <p class="text-2xl font-bold">${c.value}<span class="text-sm font-normal ml-0.5">${c.unit}</span></p>
+          <p class="text-xs mt-1 opacity-70 font-medium">${c.label}</p>
+        </div>
+      `).join('');
+
+      // Items table — merge duplicates
+      type DItem = { food_name: string; matched_food_name: string | null; confidence: number; estimated_weight_gram: number; calories: number; protein: number; carbohydrates: number; fat: number; fiber: number };
+      const rawItems: DItem[] = data.nutrition_items ?? [];
+      interface MergedDItem extends DItem { qty: number; }
+      const mergedMap = new Map<string, MergedDItem>();
+      for (const item of rawItems) {
+        const key = item.food_name.toLowerCase();
+        if (mergedMap.has(key)) {
+          const m = mergedMap.get(key)!;
+          m.qty += 1;
+          m.confidence = (m.confidence * (m.qty - 1) + item.confidence) / m.qty;
+          m.estimated_weight_gram += item.estimated_weight_gram;
+          m.calories += item.calories;
+          m.protein += item.protein;
+          m.carbohydrates += item.carbohydrates;
+          m.fat += item.fat;
+          m.fiber += item.fiber;
+        } else {
+          mergedMap.set(key, { ...item, qty: 1 });
+        }
+      }
+      const previewItems = Array.from(mergedMap.values());
+      if (previewItems.length === 0) {
+        itemsTbody.innerHTML = `<tr><td colspan="8" class="px-5 py-8 text-center text-surface-300">Tidak ada item terdeteksi dalam database nutrisi.</td></tr>`;
+      } else {
+        itemsTbody.innerHTML = previewItems.map(item => `
+          <tr class="hover:bg-surface-50 transition-colors">
+            <td class="px-5 py-3.5 font-semibold text-surface-900 capitalize">${item.food_name}</td>
+            <td class="px-5 py-3.5 text-xs">${item.matched_food_name ? `<span class="inline-flex items-center gap-1 text-brand-700 font-medium"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>${item.matched_food_name}</span>` : '<span class="text-surface-300">Tidak ditemukan</span>'}</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.estimated_weight_gram).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right font-semibold text-amber-600">${parseFloat(Number(item.calories).toFixed(2))}</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.protein).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.carbohydrates).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.fat).toFixed(2))}g</td>
+            <td class="px-5 py-3.5 text-right text-surface-600">${parseFloat(Number(item.fiber).toFixed(2))}g</td>
+          </tr>
+        `).join('');
+      }
+
+      // Preview notice row
+      const noticeRow = document.createElement('tr');
+      noticeRow.innerHTML = `<td colspan="8" class="px-5 py-2 text-center text-xs text-surface-300 italic bg-slate-50">Preview — tidak tersimpan ke database</td>`;
+      itemsTbody.appendChild(noticeRow);
+
       resultsDiv.classList.remove('hidden');
+      renderPortionRef(data.matched_daily_menu, data.nutrition_totals);
     } catch (e) {
       showError(e instanceof Error ? e.message : 'Gagal mengambil preview');
     } finally {

@@ -12,11 +12,13 @@ import { uploadToStorage } from '../../lib/supabase';
  * All detection requests upload images to Supabase and save to DB.
  * Auth is optional: authenticated requests link to user, public ones save with null userId.
  * Query: ?preview=true to return annotated image only (no upload/save).
+ * Query: ?nosave=true to return full JSON (nutrition + base64 annotated image) without saving.
  */
 export const POST: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
     const wantPreview = url.searchParams.get('preview') === 'true';
+    const noSave = url.searchParams.get('nosave') === 'true';
 
     const formData = await request.formData();
     const imageFile = formData.get('image');
@@ -28,12 +30,66 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    // Return annotated image preview
+    // Return annotated image preview (image blob only)
     if (wantPreview) {
       const previewBlob = await detectFoodPreview(imageFile, 'image.jpg');
       return new Response(previewBlob, {
         headers: { 'Content-Type': 'image/jpeg' },
       });
+    }
+
+    // Preview with full data: run detection + nutrition but skip DB save
+    if (noSave) {
+      const [result, annotatedBlob] = await Promise.all([
+        detectFood(imageFile, 'image.jpg'),
+        detectFoodPreview(imageFile, 'image.jpg').catch(() => null),
+      ]);
+
+      if (!result.success) {
+        return new Response(JSON.stringify({ success: false, error: result.error }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      const nutritionItems = await mapDetectionsToNutrition(result.menu.detections);
+      const totals = sumNutrition(nutritionItems);
+      const detectedFoodNames = nutritionItems.map(item => item.foodName);
+      const matchedMenu = await matchDailyMenu(detectedFoodNames, totals.calories);
+
+      // Encode annotated image as base64 data URL
+      let annotatedImageDataUrl: string | null = null;
+      if (annotatedBlob) {
+        const arrayBuffer = await annotatedBlob.arrayBuffer();
+        const base64 = Buffer.from(arrayBuffer).toString('base64');
+        annotatedImageDataUrl = `data:image/jpeg;base64,${base64}`;
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          detection_id: null,
+          annotated_image_data_url: annotatedImageDataUrl,
+          image_info: result.image_info,
+          foodtray: result.foodtray,
+          menu: result.menu,
+          summary: result.summary,
+          nutrition_items: nutritionItems.map((item) => ({
+            food_name: item.foodName,
+            matched_food_name: item.matchedFoodName,
+            confidence: item.confidence,
+            estimated_weight_gram: item.estimatedWeightGram,
+            calories: item.calories,
+            protein: item.protein,
+            carbohydrates: item.carbohydrates,
+            fat: item.fat,
+            fiber: item.fiber,
+          })),
+          nutrition_totals: totals,
+          matched_daily_menu: matchedMenu,
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
     // Run detection

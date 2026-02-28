@@ -11,7 +11,6 @@ export const POST: APIRoute = async () => {
   });
 };
 
-// Allow GET for safety (e.g., direct link logout)
 export const GET: APIRoute = async () => {
   return new Response(null, {
     status: 302,
